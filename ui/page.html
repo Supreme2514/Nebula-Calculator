@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header class="title-bar">
+        <div class="ornament"></div>
+        <h1>Nebula Calculator</h1>
+        <div class="ornament"></div>
+    </header>
+
+    <div class="main-layout">
+        <!-- Current -->
+        <div class="card">
+            <h2>Current Progress</h2>
+            <label for="currentBoss">Boss</label>
+            <select id="currentBoss"></select>
+            <div class="level-row">
+                
+                <div>
+                    <label for="currentLevel">Level</label>
+                    <select id="currentLevel"></select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Level -->
+        <div class="card">
+            <h2>Upgrade Target</h2>
+            <h3 id="targetBossDisplay"></h3>
+            <div class="level-row">
+                <div>
+                    <label for="targetLevel">Level</label>
+                    <select id="targetLevel"></select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Resources -->
+        <div class="card">
+            <h2>Current Inventory</h2>
+            <div class="resource-grid">
+                <div class="r1"><label>Primary Shard</label><input type="number" id="res1" placeholder="0"></div>
+                <div class="r2"><label>Intermediate Shard</label><input type="number" id="res2" placeholder="0"></div>
+                <div class="r3"><label>Advanced Shard</label><input type="number" id="res3" placeholder="0"></div>
+                <div class="r4"><label>Primary Essence</label><input type="number" id="res4" placeholder="0"></div>
+                <div class="r5"><label>Intermediate Essence</label><input type="number" id="res5" placeholder="0"></div>
+                <div class="r6"><label>Advanced Essence</label><input type="number" id="res6" placeholder="0"></div>
+                <div class="r7"><label>Scroll</label><input type="number" id="res7" placeholder="0"></div>
+                <div class="btn"><button id="calculateButton">Calculate</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results (ligger nu utanför main-layout för full bredd) -->
+   <div class="card results-card">
+
+    <h2>Resources Required</h2>
+
+    <div class="results-grid">
+
+        <div class="result-box">
+            <label>Primary Shard</label>
+            <p id="resultPrimaryShard">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Intermediate Shard</label>
+            <p id="resultIntermediateShard">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Advanced Shard</label>
+            <p id="resultAdvancedShard">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Primary Essence</label>
+            <p id="resultPrimaryEssence">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Intermediate Essence</label>
+            <p id="resultIntermediateEssence">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Advanced Essence</label>
+            <p id="resultAdvancedEssence">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Scrolls</label>
+            <p id="resultScrolls">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Ingots</label>
+            <p id="resultIngots">-</p>
+        </div>
+
+        <div class="result-box">
+            <label>Coins</label>
+            <p id="resultCoins">-</p>
+        </div>
+
+<div class="card farming-card">
+
+    <h2>Boss Kills</h2>
+
+    <div class="result-grid">
+
+        <div class="result-item">
+            <label>Boss</label>
+            <span id="farmBoss">-</span>
+        </div>
+
+        <div class="result-item">
+            <label>Estimated Runs</label>
+            <span id="estimatedRuns">-</span>
+        </div>
+	
+	<div class="result-item">
+            <label>Total Conquest</label>
+            <span id="conquestTotal">-</span>
+        </div>
+
+        <div class="result-item full-width">
+            <label>Based on average drop rates</label>
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+</div>
+<script src="app.js"></script>
+</body>
+
+```[Work in Progress]

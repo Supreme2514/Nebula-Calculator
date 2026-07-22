@@ -1,0 +1,852 @@
+[
+  {
+    "tierLevel": "1-0",
+    "order": 0,
+    "shards": {
+      "primary": 50,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-1",
+    "order": 1,
+    "shards": {
+      "primary": 100,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-2",
+    "order": 2,
+    "shards": {
+      "primary": 150,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-3",
+    "order": 3,
+    "shards": {
+      "primary": 200,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-4",
+    "order": 4,
+    "shards": {
+      "primary": 250,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 1100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-5",
+    "order": 5,
+    "shards": {
+      "primary": 300,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 1300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-6",
+    "order": 6,
+    "shards": {
+      "primary": 350,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 1500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "1-7",
+    "order": 7,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 20,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 1,
+    "ingots": 500
+  },
+  {
+    "tierLevel": "2-1",
+    "order": 8,
+    "shards": {
+      "primary": 450,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 1900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "2-2",
+    "order": 9,
+    "shards": {
+      "primary": 500,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 2100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "2-3",
+    "order": 10,
+    "shards": {
+      "primary": 550,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 2300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "2-4",
+    "order": 11,
+    "shards": {
+      "primary": 600,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 2500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "2-5",
+    "order": 12,
+    "shards": {
+      "primary": 650,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 2700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "2-6",
+    "order": 13,
+    "shards": {
+      "primary": 700,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 2900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "2-7",
+    "order": 14,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 30,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 2,
+    "ingots": 800
+  },
+  {
+    "tierLevel": "3-1",
+    "order": 15,
+    "shards": {
+      "primary": 800,
+      "intermediate": 100,
+      "advanced": 0
+    },
+    "coins": 3300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "3-2",
+    "order": 16,
+    "shards": {
+      "primary": 850,
+      "intermediate": 150,
+      "advanced": 0
+    },
+    "coins": 3500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "3-3",
+    "order": 17,
+    "shards": {
+      "primary": 900,
+      "intermediate": 200,
+      "advanced": 0
+    },
+    "coins": 3700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "3-4",
+    "order": 18,
+    "shards": {
+      "primary": 950,
+      "intermediate": 250,
+      "advanced": 0
+    },
+    "coins": 3900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "3-5",
+    "order": 19,
+    "shards": {
+      "primary": 1000,
+      "intermediate": 300,
+      "advanced": 0
+    },
+    "coins": 4100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "3-6",
+    "order": 20,
+    "shards": {
+      "primary": 1050,
+      "intermediate": 350,
+      "advanced": 0
+    },
+    "coins": 4300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "3-7",
+    "order": 21,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 40,
+      "intermediate": 20,
+      "advanced": 0
+    },
+    "scrolls": 3,
+    "ingots": 1300
+  },
+  {
+    "tierLevel": "4-1",
+    "order": 22,
+    "shards": {
+      "primary": 1150,
+      "intermediate": 450,
+      "advanced": 0
+    },
+    "coins": 4700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "4-2",
+    "order": 23,
+    "shards": {
+      "primary": 1200,
+      "intermediate": 500,
+      "advanced": 0
+    },
+    "coins": 4900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "4-3",
+    "order": 24,
+    "shards": {
+      "primary": 1250,
+      "intermediate": 550,
+      "advanced": 0
+    },
+    "coins": 5100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "4-4",
+    "order": 25,
+    "shards": {
+      "primary": 1300,
+      "intermediate": 600,
+      "advanced": 0
+    },
+    "coins": 5300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "4-5",
+    "order": 26,
+    "shards": {
+      "primary": 1350,
+      "intermediate": 650,
+      "advanced": 0
+    },
+    "coins": 5500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "4-6",
+    "order": 27,
+    "shards": {
+      "primary": 1400,
+      "intermediate": 700,
+      "advanced": 0
+    },
+    "coins": 5700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "4-7",
+    "order": 28,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 50,
+      "intermediate": 30,
+      "advanced": 0
+    },
+    "scrolls": 5,
+    "ingots": 2000
+  },
+  {
+    "tierLevel": "5-1",
+    "order": 29,
+    "shards": {
+      "primary": 0,
+      "intermediate": 800,
+      "advanced": 100
+    },
+    "coins": 6100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "5-2",
+    "order": 30,
+    "shards": {
+      "primary": 0,
+      "intermediate": 850,
+      "advanced": 150
+    },
+    "coins": 6300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "5-3",
+    "order": 31,
+    "shards": {
+      "primary": 0,
+      "intermediate": 900,
+      "advanced": 200
+    },
+    "coins": 6500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "5-4",
+    "order": 32,
+    "shards": {
+      "primary": 0,
+      "intermediate": 950,
+      "advanced": 250
+    },
+    "coins": 6700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "5-5",
+    "order": 33,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1000,
+      "advanced": 300
+    },
+    "coins": 6900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "5-6",
+    "order": 34,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1050,
+      "advanced": 350
+    },
+    "coins": 7100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "5-7",
+    "order": 35,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 40,
+      "advanced": 20
+    },
+    "scrolls": 7,
+    "ingots": 3000
+  },
+  {
+    "tierLevel": "6-1",
+    "order": 36,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1150,
+      "advanced": 450
+    },
+    "coins": 7500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "6-2",
+    "order": 37,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1200,
+      "advanced": 500
+    },
+    "coins": 7700000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "6-3",
+    "order": 38,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1250,
+      "advanced": 550
+    },
+    "coins": 7900000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "6-4",
+    "order": 39,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1300,
+      "advanced": 600
+    },
+    "coins": 8100000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "6-5",
+    "order": 40,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1350,
+      "advanced": 650
+    },
+    "coins": 8300000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "6-6",
+    "order": 41,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1400,
+      "advanced": 700
+    },
+    "coins": 8500000,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "6-7",
+    "order": 42,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 50,
+      "advanced": 30
+    },
+    "scrolls": 10,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-1",
+    "order": 43,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1500,
+      "advanced": 800
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-2",
+    "order": 44,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1550,
+      "advanced": 850
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-3",
+    "order": 45,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1600,
+      "advanced": 900
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-4",
+    "order": 46,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1650,
+      "advanced": 950
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-5",
+    "order": 47,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1700,
+      "advanced": 1000
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-6",
+    "order": 48,
+    "shards": {
+      "primary": 0,
+      "intermediate": 1750,
+      "advanced": 1050
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  },
+  {
+    "tierLevel": "7-7",
+    "order": 49,
+    "shards": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "coins": 0,
+    "essence": {
+      "primary": 0,
+      "intermediate": 0,
+      "advanced": 0
+    },
+    "scrolls": 0,
+    "ingots": 0
+  }
+]
