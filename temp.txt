@@ -402,52 +402,10 @@ function calculate() {
 
             }
 
-       };
+        };
 
-        const estimatedRuns = Math.max(
+        console.log(runs);
 
-    runs.shards.primary,
-    runs.shards.intermediate,
-    runs.shards.advanced,
-
-    runs.essence.primary,
-    runs.essence.intermediate,
-    runs.essence.advanced
-
-);
-const conquestTotal = estimatedRuns * 50;
-const goal = [];
-
-if (runs.shards.primary > 0)
-    goal.push(`Primary Shards: ${runs.shards.primary}`);
-
-if (runs.shards.intermediate > 0)
-    goal.push(`Intermediate Shards: ${runs.shards.intermediate}`);
-
-if (runs.shards.advanced > 0)
-    goal.push(`Advanced Shards: ${runs.shards.advanced}`);
-
-if (runs.essence.primary > 0)
-    goal.push(`Primary Essence: ${runs.essence.primary}`);
-
-if (runs.essence.intermediate > 0)
-    goal.push(`Intermediate Essence: ${runs.essence.intermediate}`);
-
-if (runs.essence.advanced > 0)
-    goal.push(`Advanced Essence: ${runs.essence.advanced}`);
-console.log(goal);
-
-console.log(estimatedRuns);
-
-document.getElementById("farmBoss").textContent =
-    bossSelect.value;
-
-document.getElementById("farmGoal").innerHTML =
-    goal.join("<br>");
-
-document.getElementById("conquestTotal").textContent =
-    conquestTotal.toLocaleString("sv-SE");
-
-});
+    });
 
 }

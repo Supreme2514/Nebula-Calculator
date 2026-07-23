@@ -2,7 +2,103 @@
     {
         "boss": "Dubhe",
         "shards": {
-            "primary": 10,
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "essence": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "scrolls": 0,
+        "ingots": 0,
+        "coins": 0
+    },
+    {
+        "boss": "Merak",
+        "shards": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "essence": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "scrolls": 0,
+        "ingots": 0,
+        "coins": 0
+    },
+    {
+        "boss": "Phecda",
+        "shards": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "essence": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "scrolls": 0,
+        "ingots": 0,
+        "coins": 0
+    },
+    {
+        "boss": "Megrez",
+        "shards": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "essence": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "scrolls": 0,
+        "ingots": 0,
+        "coins": 0
+    },
+    {
+        "boss": "Alioth",
+        "shards": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "essence": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "scrolls": 0,
+        "ingots": 0,
+        "coins": 0
+    },
+    {
+        "boss": "Mizar",
+        "shards": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "essence": {
+            "primary": 0,
+            "intermediate": 0,
+            "advanced": 0
+        },
+        "scrolls": 0,
+        "ingots": 0,
+        "coins": 0
+    },
+    {
+        "boss": "Alkaid",
+        "shards": {
+            "primary": 0,
             "intermediate": 0,
             "advanced": 0
         },
