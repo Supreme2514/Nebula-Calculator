@@ -358,51 +358,68 @@ function calculate() {
         // Boss Runs
         // ==========================
 
-        const selectedBoss = bossDrops.find(
-            boss => boss.boss === bossSelect.value
-        );
+        const selectedBoss = bossDrops[bossSelect.value];
 
         const runs = {
 
-            shards: {
+    shards: {
 
-                primary: calculateRuns(
-                    missing.shards.primary,
-                    selectedBoss.shards.primary
-                ),
+        primary: calculateRuns(
+            missing.shards.primary,
+            selectedBoss.drops["Primary Shard"].average
+        ),
 
-                intermediate: calculateRuns(
-                    missing.shards.intermediate,
-                    selectedBoss.shards.intermediate
-                ),
+        intermediate: calculateRuns(
+            missing.shards.intermediate,
+            selectedBoss.drops["Intermediate Shard"].average
+        ),
 
-                advanced: calculateRuns(
-                    missing.shards.advanced,
-                    selectedBoss.shards.advanced
-                )
+        advanced: calculateRuns(
+            missing.shards.advanced,
+            selectedBoss.drops["Advanced Shard"].average
+        )
 
-            },
+    },
 
-            essence: {
+    essence: {
 
-                primary: calculateRuns(
-                    missing.essence.primary,
-                    selectedBoss.essence.primary
-                ),
+        primary: calculateRuns(
+            missing.essence.primary,
+            selectedBoss.drops["Primary Essence"].average
+        ),
 
-                intermediate: calculateRuns(
-                    missing.essence.intermediate,
-                    selectedBoss.essence.intermediate
-                ),
+        intermediate: calculateRuns(
+            missing.essence.intermediate,
+            selectedBoss.drops["Intermediate Essence"].average
+        ),
 
-                advanced: calculateRuns(
-                    missing.essence.advanced,
-                    selectedBoss.essence.advanced
-                )
+        advanced: calculateRuns(
+            missing.essence.advanced,
+            (selectedBoss.drops["Advanced Essence"]?.average ?? 0)
+        )
 
-            }
+    }
 
-       };
+};
+const conquest = {
+
+    shards: {
+
+        primary: runs.shards.primary * 50,
+        intermediate: runs.shards.intermediate * 50,
+        advanced: runs.shards.advanced * 50
+
+    },
+
+    essence: {
+
+        primary: runs.essence.primary * 50,
+        intermediate: runs.essence.intermediate * 50,
+        advanced: runs.essence.advanced * 50
+
+    }
+
+};
 
         const estimatedRuns = Math.max(
 
@@ -417,33 +434,56 @@ function calculate() {
 );
 const conquestTotal = estimatedRuns * 50;
 const goal = [];
+const conquestList = [];
 
 if (runs.shards.primary > 0)
     goal.push(`Primary Shards: ${runs.shards.primary}`);
+conquestList.push(
+    `Primary Shards: ${conquest.shards.primary.toLocaleString("sv-SE")}`
+);
 
 if (runs.shards.intermediate > 0)
     goal.push(`Intermediate Shards: ${runs.shards.intermediate}`);
-
+conquestList.push(
+    `Intermediate Shards: ${conquest.shards.intermediate.toLocaleString("sv-SE")}`
+);
 if (runs.shards.advanced > 0)
     goal.push(`Advanced Shards: ${runs.shards.advanced}`);
+conquestList.push(
+    `Advanced Shards: ${conquest.shards.advanced.toLocaleString("sv-SE")}`
+);
 
 if (runs.essence.primary > 0)
     goal.push(`Primary Essence: ${runs.essence.primary}`);
+conquestList.push(
+    `Primary Essence: ${conquest.essence.primary.toLocaleString("sv-SE")}`
+);
 
 if (runs.essence.intermediate > 0)
     goal.push(`Intermediate Essence: ${runs.essence.intermediate}`);
+conquestList.push(
+    `Intermediate Essence: ${conquest.essence.intermediate.toLocaleString("sv-SE")}`
+);
 
 if (runs.essence.advanced > 0)
     goal.push(`Advanced Essence: ${runs.essence.advanced}`);
+conquestList.push(
+    `Advanced Essence: ${conquest.essence.advanced.toLocaleString("sv-SE")}`
+);
 console.log(goal);
 
 console.log(estimatedRuns);
+
+console.log(conquest);
 
 document.getElementById("farmBoss").textContent =
     bossSelect.value;
 
 document.getElementById("farmGoal").innerHTML =
     goal.join("<br>");
+
+document.getElementById("farmConquest").innerHTML =
+    conquestList.join("<br>");
 
 document.getElementById("conquestTotal").textContent =
     conquestTotal.toLocaleString("sv-SE");

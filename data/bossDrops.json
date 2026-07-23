@@ -1,114 +1,177 @@
-[
-    {
-        "boss": "Dubhe",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
-    },
-    {
-        "boss": "Merak",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
-    },
-    {
-        "boss": "Phecda",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
-    },
-    {
-        "boss": "Megrez",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
-    },
-    {
-        "boss": "Alioth",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
-    },
-    {
-        "boss": "Mizar",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
-    },
-    {
-        "boss": "Alkaid",
-        "shards": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "essence": {
-            "primary": 0,
-            "intermediate": 0,
-            "advanced": 0
-        },
-        "scrolls": 0,
-        "ingots": 0,
-        "coins": 0
+{
+  "Alkaid": {
+    "attempts": 453,
+    "drops": {
+      "Primary Shard": {
+        "total": 32152,
+        "average": 70.9757174392936
+      },
+      "Intermediate Shard": {
+        "total": 24956,
+        "average": 55.090507726269315
+      },
+      "Advanced Shard": {
+        "total": 7302,
+        "average": 16.119205298013245
+      },
+      "Primary Essence": {
+        "total": 440,
+        "average": 0.9713024282560706
+      },
+      "Intermediate Essence": {
+        "total": 172,
+        "average": 0.37969094922737306
+      }
     }
-]
+  },
+  "Mizar": {
+    "attempts": 451,
+    "drops": {
+      "Primary Shard": {
+        "total": 28911,
+        "average": 64.10421286031043
+      },
+      "Intermediate Shard": {
+        "total": 22595,
+        "average": 50.09977827050998
+      },
+      "Advanced Shard": {
+        "total": 6239,
+        "average": 13.83370288248337
+      },
+      "Primary Essence": {
+        "total": 420,
+        "average": 0.9312638580931264
+      },
+      "Intermediate Essence": {
+        "total": 173,
+        "average": 0.3835920177383592
+      }
+    }
+  },
+  "Alioth": {
+    "attempts": 252,
+    "drops": {
+      "Primary Shard": {
+        "total": 14335,
+        "average": 56.88492063492063
+      },
+      "Intermediate Shard": {
+        "total": 11425,
+        "average": 45.33730158730159
+      },
+      "Advanced Shard": {
+        "total": 3088,
+        "average": 12.253968253968255
+      },
+      "Primary Essence": {
+        "total": 249,
+        "average": 0.9880952380952381
+      },
+      "Intermediate Essence": {
+        "total": 111,
+        "average": 0.44047619047619047
+      }
+    }
+  },
+  "Megrez": {
+    "attempts": 203,
+    "drops": {
+      "Primary Shard": {
+        "total": 10148,
+        "average": 49.99014778325123
+      },
+      "Intermediate Shard": {
+        "total": 8159,
+        "average": 40.19211822660098
+      },
+      "Advanced Shard": {
+        "total": 2025,
+        "average": 9.975369458128078
+      },
+      "Primary Essence": {
+        "total": 207,
+        "average": 1.019704433497537
+      },
+      "Intermediate Essence": {
+        "total": 85,
+        "average": 0.4187192118226601
+      }
+    }
+  },
+  "Phecda": {
+    "attempts": 200,
+    "drops": {
+      "Primary Shard": {
+        "total": 8707,
+        "average": 43.535
+      },
+      "Intermediate Shard": {
+        "total": 6976,
+        "average": 34.88
+      },
+      "Advanced Shard": {
+        "total": 1571,
+        "average": 7.855
+      },
+      "Primary Essence": {
+        "total": 213,
+        "average": 1.065
+      },
+      "Intermediate Essence": {
+        "total": 83,
+        "average": 0.415
+      }
+    }
+  },
+  "Merak": {
+    "attempts": 161,
+    "drops": {
+      "Primary Shard": {
+        "total": 5805,
+        "average": 36.05590062111801
+      },
+      "Intermediate Shard": {
+        "total": 4824,
+        "average": 29.96273291925466
+      },
+      "Advanced Shard": {
+        "total": 955,
+        "average": 5.931677018633541
+      },
+      "Primary Essence": {
+        "total": 148,
+        "average": 0.9192546583850931
+      },
+      "Intermediate Essence": {
+        "total": 71,
+        "average": 0.4409937888198758
+      }
+    }
+  },
+  "Dubhe": {
+    "attempts": 119,
+    "drops": {
+      "Primary Shard": {
+        "total": 3473,
+        "average": 29.18487394957983
+      },
+      "Intermediate Shard": {
+        "total": 2969,
+        "average": 24.949579831932773
+      },
+      "Advanced Shard": {
+        "total": 468,
+        "average": 3.9327731092436973
+      },
+      "Primary Essence": {
+        "total": 115,
+        "average": 0.9663865546218487
+      },
+      "Intermediate Essence": {
+        "total": 41,
+        "average": 0.3445378151260504
+      }
+    }
+  }
+}

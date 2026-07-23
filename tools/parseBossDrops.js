@@ -1,5 +1,6 @@
 const XLSX = require("xlsx");
 const path = require("path");
+const fs = require("fs");
 
 const file = path.join(__dirname, "..", "source", "BossDrops.xlsx");
 const rows = XLSX.utils.sheet_to_json(XLSX.readFile(file).Sheets["Average"], { header: 1, defval: "" });
@@ -31,4 +32,19 @@ function parseBosses(rows) {
     return result;
 }
 
-console.log(JSON.stringify(parseBosses(rows), null, 2));
+const bossDrops = parseBosses(rows);
+
+const outputPath = path.join(
+    __dirname,
+    "..",
+    "data",
+    "bossDrops.json"
+);
+
+fs.writeFileSync(
+    outputPath,
+    JSON.stringify(bossDrops, null, 2),
+    "utf8"
+);
+
+console.log("✓ bossDrops.json updated");
