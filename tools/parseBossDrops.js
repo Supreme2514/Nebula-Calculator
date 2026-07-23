@@ -1,53 +1,34 @@
 const XLSX = require("xlsx");
 const path = require("path");
-const fs = require("fs");
 
-const excelPath = path.join(
-    __dirname,
-    "..",
-    "source",
-    "BossDrops.xlsx"
-);
+const file = path.join(__dirname, "..", "source", "BossDrops.xlsx");
+const rows = XLSX.utils.sheet_to_json(XLSX.readFile(file).Sheets["Average"], { header: 1, defval: "" });
 
-const workbook = XLSX.readFile(excelPath);
+function parseBosses(rows) {
+    if (!rows.length) return {};
+    
+    const bosses = rows[0].map((name, col) => ({ name: String(name).trim(), col })).filter(b => b.col > 0 && b.name);
+    const result = Object.fromEntries(bosses.map(b => [b.name, { attempts: 0, drops: {} }]));
+    
+    let lastItem = "";
 
-const sheetName = workbook.SheetNames[0];
+    for (let r = 1; r < rows.length; r++) {
+        const label = String(rows[r][0]).trim();
+        if (!label) continue;
 
-const sheet = workbook.Sheets[sheetName];
+        if (label.toLowerCase() === "attempts") {
+            bosses.forEach(b => result[b.name].attempts = Number(rows[r][b.col]) || 0);
+        } else if (label.toLowerCase() === "average") {
+            if (lastItem) bosses.forEach(b => {
+                const val = rows[r][b.col];
+                result[b.name].drops[lastItem].average = typeof val === "number" ? val : parseFloat(String(val).replace(",", ".")) || 0;
+            });
+        } else {
+            lastItem = label;
+            bosses.forEach(b => result[b.name].drops[lastItem] = { total: Number(rows[r][b.col]) || 0, average: 0 });
+        }
+    }
+    return result;
+}
 
-const rows = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: ""
-});
-
-console.log(rows.slice(-15));
-
-const attemptsIndex = rows.findIndex(
-    row => row[0] === "Attempts"
-);
-
-console.log(attemptsIndex);
-
-const XLSX = require("xlsx");
-const path = require("path");
-const fs = require("fs");
-
-const excelPath = path.join(
-    __dirname,
-    "..",
-    "source",
-    "BossDrops.xlsx"
-);
-
-const workbook = XLSX.readFile(excelPath);
-
-const sheetName = workbook.SheetNames[0];
-
-const sheet = workbook.Sheets[sheetName];
-
-const rows = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: ""
-});
-
-console.log(rows);
+console.log(JSON.stringify(parseBosses(rows), null, 2));
