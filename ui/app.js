@@ -436,40 +436,49 @@ const conquestTotal = estimatedRuns * 50;
 const goal = [];
 const conquestList = [];
 
-if (runs.shards.primary > 0)
+if (runs.shards.primary > 0) {
+
     goal.push(`Primary Shards: ${runs.shards.primary}`);
-conquestList.push(
-    `Primary Shards: ${conquest.shards.primary.toLocaleString("sv-SE")}`
-);
 
-if (runs.shards.intermediate > 0)
+    conquestList.push(
+        `Primary Shards: ${conquest.shards.primary.toLocaleString("sv-SE")}`
+    );
+
+}
+
+if (runs.shards.intermediate > 0) {
     goal.push(`Intermediate Shards: ${runs.shards.intermediate}`);
-conquestList.push(
-    `Intermediate Shards: ${conquest.shards.intermediate.toLocaleString("sv-SE")}`
-);
-if (runs.shards.advanced > 0)
+    conquestList.push(
+        `Intermediate Shards: ${conquest.shards.intermediate.toLocaleString("sv-SE")}`
+    );
+}
+if (runs.shards.advanced > 0) {
     goal.push(`Advanced Shards: ${runs.shards.advanced}`);
-conquestList.push(
-    `Advanced Shards: ${conquest.shards.advanced.toLocaleString("sv-SE")}`
-);
+    conquestList.push(
+        `Advanced Shards: ${conquest.shards.advanced.toLocaleString("sv-SE")}`
+    );
+}
 
-if (runs.essence.primary > 0)
+if (runs.essence.primary > 0) {
     goal.push(`Primary Essence: ${runs.essence.primary}`);
-conquestList.push(
-    `Primary Essence: ${conquest.essence.primary.toLocaleString("sv-SE")}`
-);
+    conquestList.push(
+        `Primary Essence: ${conquest.essence.primary.toLocaleString("sv-SE")}`
+    );
+}
 
-if (runs.essence.intermediate > 0)
+if (runs.essence.intermediate > 0) {
     goal.push(`Intermediate Essence: ${runs.essence.intermediate}`);
-conquestList.push(
-    `Intermediate Essence: ${conquest.essence.intermediate.toLocaleString("sv-SE")}`
-);
+    conquestList.push(
+        `Intermediate Essence: ${conquest.essence.intermediate.toLocaleString("sv-SE")}`
+    );
+}
 
-if (runs.essence.advanced > 0)
+if (runs.essence.advanced > 0) {
     goal.push(`Advanced Essence: ${runs.essence.advanced}`);
-conquestList.push(
-    `Advanced Essence: ${conquest.essence.advanced.toLocaleString("sv-SE")}`
-);
+    conquestList.push(
+        `Advanced Essence: ${conquest.essence.advanced.toLocaleString("sv-SE")}`
+    );
+}
 console.log(goal);
 
 console.log(estimatedRuns);

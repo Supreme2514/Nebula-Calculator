@@ -141,6 +141,45 @@ h2 {
 #targetBossDisplay {
     color: var(--gold-light) !important;
 }
+.section-divider {
+
+    grid-column: 1 / -1;
+
+    height: 1px;
+
+    background: var(--gold-light);
+
+    margin: 8px 0;
+
+}
+.result-item label {
+
+    color: var(--gold-light);
+
+    font-size: 0.9rem;
+
+    margin-bottom: 6px;
+
+    display: block;
+
+}
+
+.result-item span {
+
+    color: white;
+
+    font-weight: 600;
+
+}
+.resource-list {
+
+    color: white;
+
+    font-weight: 600;
+
+    line-height: 1.6;
+
+}
 
 /* Rubriker behåller den vanliga guld-färgen */
 .card h2, 
