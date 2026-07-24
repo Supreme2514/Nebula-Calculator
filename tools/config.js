@@ -1,5 +1,8 @@
 module.exports = {
     sourceFolder: "source",
-    sourceFile: "NebulaCost.xlsx",
+
+    costFile: "NebulaCost.xlsx",
+    bossDropFile: "BossDrops.xlsx",
+
     outputFolder: "data"
 };

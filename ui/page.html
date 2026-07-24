@@ -19,7 +19,7 @@
     <div class="main-layout">
         <!-- Current -->
         <div class="card">
-            <h2>Current Progress</h2>
+            <h2>Your Level</h2>
             <label for="currentBoss">Boss</label>
             <select id="currentBoss"></select>
             <div class="level-row">
@@ -33,7 +33,7 @@
 
         <!-- Target Level -->
         <div class="card">
-            <h2>Upgrade Target</h2>
+            <h2>Desired Level</h2>
             <h3 id="targetBossDisplay"></h3>
             <div class="level-row">
                 <div>
@@ -45,7 +45,7 @@
 
         <!-- Current Resources -->
         <div class="card">
-            <h2>Current Inventory</h2>
+            <h2>Your Inventory</h2>
             <div class="resource-grid">
                 <div class="r1"><label>Primary Shard</label><input type="number" id="res1" placeholder="0"></div>
                 <div class="r2"><label>Intermediate Shard</label><input type="number" id="res2" placeholder="0"></div>
@@ -124,13 +124,13 @@
         <div class="section-divider"></div>
 
         <div class="result-item">
-            <label>Goal</label>
+            <label>Goal - Number of kills</label>
             <div id="farmGoal" class="resource-list"></div>
         </div>
         <div class="section-divider"></div>
 	
         <div class="result-item">
-    <label>Conquest</label>
+    <label>Conquest - Spend to get needed resource</label>
     <div id="farmConquest" class="resource-list"></div>
 </div>
     <div class="section-divider"></div>

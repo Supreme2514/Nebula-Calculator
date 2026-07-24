@@ -68,7 +68,10 @@ const columns = {
 
 const upgradeRows = rows
     .slice(2)
-    .filter(row => /^\d-\d$/.test(row[columns.shards.tier]));
+    .filter(row =>
+        row[columns.shards.tier] === "0" ||
+        /^\d-\d$/.test(row[columns.shards.tier])
+    );
 
 const upgrades = upgradeRows.map(parseUpgradeRow);
 

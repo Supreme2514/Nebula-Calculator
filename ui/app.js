@@ -36,6 +36,23 @@ const calculateButton =
 // ==============================
 function populateLevels(selectElement, includeZero) {
 
+    if (includeZero) {
+
+    const divider = document.createElement("option");
+
+    divider.textContent = "──────── Tier 0 ────────";
+    divider.disabled = true;
+
+    selectElement.appendChild(divider);
+
+    const zero = document.createElement("option");
+
+    zero.value = "0";
+    zero.textContent = "0";
+
+    selectElement.appendChild(zero);
+
+}
     for (let tier = 1; tier <= 7; tier++) {
 
         const divider = document.createElement("option");
@@ -47,10 +64,7 @@ function populateLevels(selectElement, includeZero) {
 
         selectElement.appendChild(divider);
 
-        const startLevel =
-            tier === 1 && includeZero ? 0 : 1;
-
-        for (let level = startLevel; level <= 7; level++) {
+            for (let level = 1; level <= 7; level++) {
 
             const option =
                 document.createElement("option");
@@ -432,6 +446,17 @@ const conquest = {
     runs.essence.advanced
 
 );
+function addResource(goal, conquestList, amount, conquestCost, label) {
+
+    if (amount <= 0) return;
+
+    goal.push(`${label}: ${amount}`);
+
+    conquestList.push(
+        `${label}: ${conquestCost.toLocaleString("sv-SE")}`
+    );
+
+}
 const conquestTotal = estimatedRuns * 50;
 const goal = [];
 const conquestList = [];

@@ -1,6 +1,6 @@
 [
   {
-    "tierLevel": "1-0",
+    "tierLevel": "0",
     "order": 0,
     "shards": {
       "primary": 50,
@@ -738,7 +738,7 @@
       "intermediate": 1500,
       "advanced": 800
     },
-    "coins": 0,
+    "coins": 8900000,
     "essence": {
       "primary": 0,
       "intermediate": 0,
@@ -755,7 +755,7 @@
       "intermediate": 1550,
       "advanced": 850
     },
-    "coins": 0,
+    "coins": 9100000,
     "essence": {
       "primary": 0,
       "intermediate": 0,
@@ -772,7 +772,7 @@
       "intermediate": 1600,
       "advanced": 900
     },
-    "coins": 0,
+    "coins": 9300000,
     "essence": {
       "primary": 0,
       "intermediate": 0,
@@ -789,7 +789,7 @@
       "intermediate": 1650,
       "advanced": 950
     },
-    "coins": 0,
+    "coins": 9500000,
     "essence": {
       "primary": 0,
       "intermediate": 0,
@@ -806,7 +806,7 @@
       "intermediate": 1700,
       "advanced": 1000
     },
-    "coins": 0,
+    "coins": 9700000,
     "essence": {
       "primary": 0,
       "intermediate": 0,
@@ -823,7 +823,7 @@
       "intermediate": 1750,
       "advanced": 1050
     },
-    "coins": 0,
+    "coins": 9900000,
     "essence": {
       "primary": 0,
       "intermediate": 0,
