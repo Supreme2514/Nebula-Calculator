@@ -225,7 +225,28 @@ function calculateRuns(needed, averageDrop) {
 
 }
 
+function addResource(goal, conquestList, resource) {
 
+    const [label, amount, conquestCost] = resource;
+
+    if (amount <= 0)
+        return;
+
+    goal.push(
+        `${label}: ${amount}`
+    );
+
+    conquestList.push(
+        `${label}: ${conquestCost.toLocaleString("sv-SE")}`
+    );
+
+}
+
+function calculateBossFarm(missing, selectedBoss) {
+
+
+
+}
 // ==============================
 // Startup
 // ==============================
@@ -417,23 +438,32 @@ function calculate() {
 };
 const conquest = {
 
-    shards: {
+    shards: {},
 
-        primary: runs.shards.primary * 50,
-        intermediate: runs.shards.intermediate * 50,
-        advanced: runs.shards.advanced * 50
-
-    },
-
-    essence: {
-
-        primary: runs.essence.primary * 50,
-        intermediate: runs.essence.intermediate * 50,
-        advanced: runs.essence.advanced * 50
-
-    }
+    essence: {}
 
 };
+
+for (const type of ["primary", "intermediate", "advanced"]) {
+
+    conquest.shards[type] =
+        runs.shards[type] * 50;
+
+    conquest.essence[type] =
+        runs.essence[type] * 50;
+
+};
+const resources = [
+
+    ["Primary Shards", runs.shards.primary, conquest.shards.primary],
+    ["Intermediate Shards", runs.shards.intermediate, conquest.shards.intermediate],
+    ["Advanced Shards", runs.shards.advanced, conquest.shards.advanced],
+
+    ["Primary Essence", runs.essence.primary, conquest.essence.primary],
+    ["Intermediate Essence", runs.essence.intermediate, conquest.essence.intermediate],
+    ["Advanced Essence", runs.essence.advanced, conquest.essence.advanced]
+
+];
 
         const estimatedRuns = Math.max(
 
@@ -446,63 +476,19 @@ const conquest = {
     runs.essence.advanced
 
 );
-function addResource(goal, conquestList, amount, conquestCost, label) {
 
-    if (amount <= 0) return;
-
-    goal.push(`${label}: ${amount}`);
-
-    conquestList.push(
-        `${label}: ${conquestCost.toLocaleString("sv-SE")}`
-    );
-
-}
 const conquestTotal = estimatedRuns * 50;
 const goal = [];
 const conquestList = [];
 
-if (runs.shards.primary > 0) {
+for (const resource of resources) {
 
-    goal.push(`Primary Shards: ${runs.shards.primary}`);
-
-    conquestList.push(
-        `Primary Shards: ${conquest.shards.primary.toLocaleString("sv-SE")}`
+    addResource(
+        goal,
+        conquestList,
+        resource
     );
 
-}
-
-if (runs.shards.intermediate > 0) {
-    goal.push(`Intermediate Shards: ${runs.shards.intermediate}`);
-    conquestList.push(
-        `Intermediate Shards: ${conquest.shards.intermediate.toLocaleString("sv-SE")}`
-    );
-}
-if (runs.shards.advanced > 0) {
-    goal.push(`Advanced Shards: ${runs.shards.advanced}`);
-    conquestList.push(
-        `Advanced Shards: ${conquest.shards.advanced.toLocaleString("sv-SE")}`
-    );
-}
-
-if (runs.essence.primary > 0) {
-    goal.push(`Primary Essence: ${runs.essence.primary}`);
-    conquestList.push(
-        `Primary Essence: ${conquest.essence.primary.toLocaleString("sv-SE")}`
-    );
-}
-
-if (runs.essence.intermediate > 0) {
-    goal.push(`Intermediate Essence: ${runs.essence.intermediate}`);
-    conquestList.push(
-        `Intermediate Essence: ${conquest.essence.intermediate.toLocaleString("sv-SE")}`
-    );
-}
-
-if (runs.essence.advanced > 0) {
-    goal.push(`Advanced Essence: ${runs.essence.advanced}`);
-    conquestList.push(
-        `Advanced Essence: ${conquest.essence.advanced.toLocaleString("sv-SE")}`
-    );
 }
 console.log(goal);
 
