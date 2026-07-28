@@ -2,512 +2,310 @@
 // Bosses
 // ==============================
 const bosses = [
-    "Dubhe",
-    "Merak",
-    "Phecda",
-    "Megrez",
-    "Alioth",
-    "Mizar",
-    "Alkaid"
+  "Dubhe",
+  "Merak",
+  "Phecda",
+  "Megrez",
+  "Alioth",
+  "Mizar",
+  "Alkaid"
 ];
-
 
 // ==============================
 // DOM Elements
 // ==============================
-const bossSelect =
-    document.getElementById("currentBoss");
-
-const bossDisplay =
-    document.getElementById("targetBossDisplay");
-
-const currentLevelSelect =
-    document.getElementById("currentLevel");
-
-const targetLevelSelect =
-    document.getElementById("targetLevel");
-
-const calculateButton =
-    document.getElementById("calculateButton");
-
+const bossSelect = document.getElementById("currentBoss");
+const bossDisplay = document.getElementById("targetBossDisplay");
+const currentLevelSelect = document.getElementById("currentLevel");
+const targetLevelSelect = document.getElementById("targetLevel");
+const calculateButton = document.getElementById("calculateButton");
 
 // ==============================
 // Helper Functions
 // ==============================
 function populateLevels(selectElement, includeZero) {
-
-    if (includeZero) {
-
+  if (includeZero) {
     const divider = document.createElement("option");
-
     divider.textContent = "──────── Tier 0 ────────";
     divider.disabled = true;
-
     selectElement.appendChild(divider);
 
     const zero = document.createElement("option");
-
     zero.value = "0";
     zero.textContent = "0";
-
     selectElement.appendChild(zero);
+  }
 
-}
-    for (let tier = 1; tier <= 7; tier++) {
+  for (let tier = 1; tier <= 7; tier++) {
+    const divider = document.createElement("option");
+    divider.textContent = `──────── Tier ${tier} ────────`;
+    divider.disabled = true;
+    selectElement.appendChild(divider);
 
-        const divider = document.createElement("option");
-
-        divider.textContent =
-            `──────── Tier ${tier} ────────`;
-
-        divider.disabled = true;
-
-        selectElement.appendChild(divider);
-
-            for (let level = 1; level <= 7; level++) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = `${tier}-${level}`;
-            option.textContent = `${tier}-${level}`;
-
-            selectElement.appendChild(option);
-        }
+    for (let level = 1; level <= 7; level++) {
+      const option = document.createElement("option");
+      option.value = `${tier}-${level}`;
+      option.textContent = `${tier}-${level}`;
+      selectElement.appendChild(option);
     }
-
+  }
 }
 
 function getUpgradePath(start, goal, upgrades) {
-
-    return upgrades.filter(
-        upgrade =>
-            upgrade.order >= start.order &&
-            upgrade.order <= goal.order
-    );
-
+  return upgrades.filter(
+    upgrade => upgrade.order >= start.order && upgrade.order <= goal.order
+  );
 }
 
 function calculateCost(upgradeSteps) {
+  const total = {
+    shards: { primary: 0, intermediate: 0, advanced: 0 },
+    coins: 0,
+    essence: { primary: 0, intermediate: 0, advanced: 0 },
+    scrolls: 0,
+    ingots: 0
+  };
 
-    const total = {
+  for (const step of upgradeSteps) {
+    total.coins += step.coins;
+    total.scrolls += step.scrolls;
+    total.ingots += step.ingots;
 
-        shards: {
-            primary: 0,
-            intermediate: 0,
-            advanced: 0
-        },
+    total.shards.primary += step.shards.primary;
+    total.shards.intermediate += step.shards.intermediate;
+    total.shards.advanced += step.shards.advanced;
 
-        coins: 0,
+    total.essence.primary += step.essence.primary;
+    total.essence.intermediate += step.essence.intermediate;
+    total.essence.advanced += step.essence.advanced;
+  }
 
-        essence: {
-            primary: 0,
-            intermediate: 0,
-            advanced: 0
-        },
-
-        scrolls: 0,
-
-        ingots: 0
-
-    };
-
-    for (const step of upgradeSteps) {
-
-        total.coins += step.coins;
-        total.scrolls += step.scrolls;
-        total.ingots += step.ingots;
-
-        total.shards.primary += step.shards.primary;
-        total.shards.intermediate += step.shards.intermediate;
-        total.shards.advanced += step.shards.advanced;
-
-        total.essence.primary += step.essence.primary;
-        total.essence.intermediate += step.essence.intermediate;
-        total.essence.advanced += step.essence.advanced;
-
-    }
-
-    return total;
-
+  return total;
 }
 
 function calculateMissing(totalCost, inventory) {
+  return {
+    shards: {
+      primary: Math.max(0, totalCost.shards.primary - inventory.shards.primary),
+      intermediate: Math.max(0, totalCost.shards.intermediate - inventory.shards.intermediate),
+      advanced: Math.max(0, totalCost.shards.advanced - inventory.shards.advanced)
+    },
 
-    return {
+    coins: Math.max(0, totalCost.coins - inventory.coins),
 
-        shards: {
+    essence: {
+      primary: Math.max(0, totalCost.essence.primary - inventory.essence.primary),
+      intermediate: Math.max(0, totalCost.essence.intermediate - inventory.essence.intermediate),
+      advanced: Math.max(0, totalCost.essence.advanced - inventory.essence.advanced)
+    },
 
-            primary:
-                Math.max(
-                    0,
-                    totalCost.shards.primary -
-                    inventory.shards.primary
-                ),
+    scrolls: Math.max(0, totalCost.scrolls - inventory.scrolls),
 
-            intermediate:
-                Math.max(
-                    0,
-                    totalCost.shards.intermediate -
-                    inventory.shards.intermediate
-                ),
-
-            advanced:
-                Math.max(
-                    0,
-                    totalCost.shards.advanced -
-                    inventory.shards.advanced
-                )
-
-        },
-
-        coins:
-            Math.max(
-                0,
-                totalCost.coins -
-                inventory.coins
-            ),
-
-        essence: {
-
-            primary:
-                Math.max(
-                    0,
-                    totalCost.essence.primary -
-                    inventory.essence.primary
-                ),
-
-            intermediate:
-                Math.max(
-                    0,
-                    totalCost.essence.intermediate -
-                    inventory.essence.intermediate
-                ),
-
-            advanced:
-                Math.max(
-                    0,
-                    totalCost.essence.advanced -
-                    inventory.essence.advanced
-                )
-
-        },
-
-        scrolls:
-            Math.max(
-                0,
-                totalCost.scrolls -
-                inventory.scrolls
-            ),
-
-        ingots:
-            Math.max(
-                0,
-                totalCost.ingots -
-                inventory.ingots
-            )
-
-    };
-
+    ingots: Math.max(0, totalCost.ingots - inventory.ingots)
+  };
 }
 
 function calculateRuns(needed, averageDrop) {
+  if (needed <= 0) return 0;
+  if (averageDrop <= 0) return 0;
 
-    if (needed <= 0)
-        return 0;
-
-    if (averageDrop <= 0)
-        return 0;
-
-    return Math.ceil(
-        needed / averageDrop
-    );
-
+  return Math.ceil(needed / averageDrop);
 }
 
 function addResource(goal, conquestList, resource) {
+  const [label, amount, conquestCost] = resource;
 
-    const [label, amount, conquestCost] = resource;
+  if (amount <= 0) return;
 
-    if (amount <= 0)
-        return;
-
-    goal.push(
-        `${label}: ${amount}`
-    );
-
-    conquestList.push(
-        `${label}: ${conquestCost.toLocaleString("sv-SE")}`
-    );
-
+  goal.push(`${label}: ${amount}`);
+  conquestList.push(`${label}: ${conquestCost.toLocaleString("sv-SE")}`);
 }
 
 function calculateBossFarm(missing, selectedBoss) {
+  const runs = {
+    shards: {
+      primary: calculateRuns(
+        missing.shards.primary,
+        selectedBoss.drops["Primary Shard"].average
+      ),
+      intermediate: calculateRuns(
+        missing.shards.intermediate,
+        selectedBoss.drops["Intermediate Shard"].average
+      ),
+      advanced: calculateRuns(
+        missing.shards.advanced,
+        selectedBoss.drops["Advanced Shard"].average
+      )
+    },
 
+    essence: {
+      primary: calculateRuns(
+        missing.essence.primary,
+        selectedBoss.drops["Primary Essence"].average
+      ),
+      intermediate: calculateRuns(
+        missing.essence.intermediate,
+        selectedBoss.drops["Intermediate Essence"].average
+      ),
+      advanced: calculateRuns(
+        missing.essence.advanced,
+        selectedBoss.drops["Advanced Essence"]?.average ?? 0
+      )
+    }
+  };
 
+  const conquest = {
+    shards: {},
+    essence: {}
+  };
 
+  for (const type of ["primary", "intermediate", "advanced"]) {
+    conquest.shards[type] = runs.shards[type] * 50;
+    conquest.essence[type] = runs.essence[type] * 50;
+  }
+
+  const estimatedRuns = Math.max(
+    runs.shards.primary,
+    runs.shards.intermediate,
+    runs.shards.advanced,
+    runs.essence.primary,
+    runs.essence.intermediate,
+    runs.essence.advanced
+  );
+
+  // Built from the runs/conquest totals above so addResource has
+  // [label, amount, conquestCost] tuples to work with.
+  const resources = [
+    ["Primary Shard", runs.shards.primary, conquest.shards.primary],
+    ["Intermediate Shard", runs.shards.intermediate, conquest.shards.intermediate],
+    ["Advanced Shard", runs.shards.advanced, conquest.shards.advanced],
+    ["Primary Essence", runs.essence.primary, conquest.essence.primary],
+    ["Intermediate Essence", runs.essence.intermediate, conquest.essence.intermediate],
+    ["Advanced Essence", runs.essence.advanced, conquest.essence.advanced]
+  ];
+
+  const goal = [];
+  const conquestList = [];
+
+  for (const resource of resources) {
+    addResource(goal, conquestList, resource);
+  }
+
+  return {
+    runs,
+    conquest,
+    estimatedRuns,
+    goal,
+    conquestList
+  };
 }
+
 // ==============================
 // Startup
 // ==============================
-
 populateLevels(currentLevelSelect, true);
 populateLevels(targetLevelSelect, false);
 
 bosses.forEach(boss => {
-
-    const option =
-        document.createElement("option");
-
-    option.value = boss;
-    option.textContent = boss;
-
-    bossSelect.appendChild(option);
-
+  const option = document.createElement("option");
+  option.value = boss;
+  option.textContent = boss;
+  bossSelect.appendChild(option);
 });
 
-bossDisplay.innerText =
-    bossSelect.value;
+bossDisplay.innerText = bossSelect.value;
 
-bossSelect.addEventListener(
-    "change",
-    function () {
-
-        bossDisplay.innerText =
-            bossSelect.value;
-
-    }
-);
-
+bossSelect.addEventListener("change", function () {
+  bossDisplay.innerText = bossSelect.value;
+});
 
 // ==============================
 // Event Listener
 // ==============================
-
-calculateButton.addEventListener(
-    "click",
-    calculate
-);
-
+calculateButton.addEventListener("click", calculate);
 
 // ==============================
 // Calculate
 // ==============================
-
 function calculate() {
+  const currentLevel = currentLevelSelect.value;
+  const targetLevel = targetLevelSelect.value;
 
-    const currentLevel = currentLevelSelect.value;
-    const targetLevel = targetLevelSelect.value;
-
-    const inventory = {
-
-        shards: {
-            primary: Number(document.getElementById("res1").value) || 0,
-            intermediate: Number(document.getElementById("res2").value) || 0,
-            advanced: Number(document.getElementById("res3").value) || 0
-        },
-
-        essence: {
-            primary: Number(document.getElementById("res4").value) || 0,
-            intermediate: Number(document.getElementById("res5").value) || 0,
-            advanced: Number(document.getElementById("res6").value) || 0
-        },
-
-        scrolls:
-            Number(document.getElementById("res7").value) || 0,
-
-        ingots: 0,
-
-        coins: 0
-
-    };
-
-    Promise.all([
-
-        fetch("../data/costs.json")
-            .then(response => response.json()),
-
-        fetch("../data/bossDrops.json")
-            .then(response => response.json())
-
-    ])
-
-    .then(([costs, bossDrops]) => {
-
-        const currentUpgrade = costs.find(
-            step => step.tierLevel === currentLevel
-        );
-
-        const targetUpgrade = costs.find(
-            step => step.tierLevel === targetLevel
-        );
-
-        const upgradePath = getUpgradePath(
-            currentUpgrade,
-            targetUpgrade,
-            costs
-        );
-
-        const totalCost =
-            calculateCost(upgradePath);
-
-        const missing =
-            calculateMissing(
-                totalCost,
-                inventory
-            );
-
-        // ==========================
-        // Update Result Card
-        // ==========================
-
-        document.getElementById("resultPrimaryShard").textContent =
-            missing.shards.primary.toLocaleString("sv-SE");
-
-        document.getElementById("resultIntermediateShard").textContent =
-            missing.shards.intermediate.toLocaleString("sv-SE");
-
-        document.getElementById("resultAdvancedShard").textContent =
-            missing.shards.advanced.toLocaleString("sv-SE");
-
-        document.getElementById("resultPrimaryEssence").textContent =
-            missing.essence.primary.toLocaleString("sv-SE");
-
-        document.getElementById("resultIntermediateEssence").textContent =
-            missing.essence.intermediate.toLocaleString("sv-SE");
-
-        document.getElementById("resultAdvancedEssence").textContent =
-            missing.essence.advanced.toLocaleString("sv-SE");
-
-        document.getElementById("resultScrolls").textContent =
-            missing.scrolls.toLocaleString("sv-SE");
-
-        document.getElementById("resultIngots").textContent =
-            missing.ingots.toLocaleString("sv-SE");
-
-        document.getElementById("resultCoins").textContent =
-            missing.coins.toLocaleString("sv-SE");
-
-
-        // ==========================
-        // Boss Runs
-        // ==========================
-
-        const selectedBoss = bossDrops[bossSelect.value];
-
-        const runs = {
-
+  const inventory = {
     shards: {
-
-        primary: calculateRuns(
-            missing.shards.primary,
-            selectedBoss.drops["Primary Shard"].average
-        ),
-
-        intermediate: calculateRuns(
-            missing.shards.intermediate,
-            selectedBoss.drops["Intermediate Shard"].average
-        ),
-
-        advanced: calculateRuns(
-            missing.shards.advanced,
-            selectedBoss.drops["Advanced Shard"].average
-        )
-
+      primary: Number(document.getElementById("res1").value) || 0,
+      intermediate: Number(document.getElementById("res2").value) || 0,
+      advanced: Number(document.getElementById("res3").value) || 0
     },
 
     essence: {
+      primary: Number(document.getElementById("res4").value) || 0,
+      intermediate: Number(document.getElementById("res5").value) || 0,
+      advanced: Number(document.getElementById("res6").value) || 0
+    },
 
-        primary: calculateRuns(
-            missing.essence.primary,
-            selectedBoss.drops["Primary Essence"].average
-        ),
+    scrolls: Number(document.getElementById("res7").value) || 0,
 
-        intermediate: calculateRuns(
-            missing.essence.intermediate,
-            selectedBoss.drops["Intermediate Essence"].average
-        ),
+    ingots: 0,
 
-        advanced: calculateRuns(
-            missing.essence.advanced,
-            (selectedBoss.drops["Advanced Essence"]?.average ?? 0)
-        )
+    coins: 0
+  };
 
-    }
+  Promise.all([
+    fetch("../data/costs.json").then(response => response.json()),
+    fetch("../data/bossDrops.json").then(response => response.json())
+  ]).then(([costs, bossDrops]) => {
+    const currentUpgrade = costs.find(step => step.tierLevel === currentLevel);
+    const targetUpgrade = costs.find(step => step.tierLevel === targetLevel);
 
-};
-const conquest = {
+    const upgradePath = getUpgradePath(currentUpgrade, targetUpgrade, costs);
+    const totalCost = calculateCost(upgradePath);
+    const missing = calculateMissing(totalCost, inventory);
 
-    shards: {},
+    // ==========================
+    // Update Result Card
+    // ==========================
+    document.getElementById("resultPrimaryShard").textContent =
+      missing.shards.primary.toLocaleString("sv-SE");
 
-    essence: {}
+    document.getElementById("resultIntermediateShard").textContent =
+      missing.shards.intermediate.toLocaleString("sv-SE");
 
-};
+    document.getElementById("resultAdvancedShard").textContent =
+      missing.shards.advanced.toLocaleString("sv-SE");
 
-for (const type of ["primary", "intermediate", "advanced"]) {
+    document.getElementById("resultPrimaryEssence").textContent =
+      missing.essence.primary.toLocaleString("sv-SE");
 
-    conquest.shards[type] =
-        runs.shards[type] * 50;
+    document.getElementById("resultIntermediateEssence").textContent =
+      missing.essence.intermediate.toLocaleString("sv-SE");
 
-    conquest.essence[type] =
-        runs.essence[type] * 50;
+    document.getElementById("resultAdvancedEssence").textContent =
+      missing.essence.advanced.toLocaleString("sv-SE");
 
-};
-const resources = [
+    document.getElementById("resultScrolls").textContent =
+      missing.scrolls.toLocaleString("sv-SE");
 
-    ["Primary Shards", runs.shards.primary, conquest.shards.primary],
-    ["Intermediate Shards", runs.shards.intermediate, conquest.shards.intermediate],
-    ["Advanced Shards", runs.shards.advanced, conquest.shards.advanced],
+    document.getElementById("resultIngots").textContent =
+      missing.ingots.toLocaleString("sv-SE");
 
-    ["Primary Essence", runs.essence.primary, conquest.essence.primary],
-    ["Intermediate Essence", runs.essence.intermediate, conquest.essence.intermediate],
-    ["Advanced Essence", runs.essence.advanced, conquest.essence.advanced]
+    document.getElementById("resultCoins").textContent =
+      missing.coins.toLocaleString("sv-SE");
 
-];
+    // ==========================
+    // Boss Runs
+    // ==========================
+    const selectedBoss = bossDrops[bossSelect.value];
 
-        const estimatedRuns = Math.max(
+    const { runs, conquest, estimatedRuns, goal, conquestList } =
+      calculateBossFarm(missing, selectedBoss);
 
-    runs.shards.primary,
-    runs.shards.intermediate,
-    runs.shards.advanced,
+    const conquestTotal = estimatedRuns * 50;
 
-    runs.essence.primary,
-    runs.essence.intermediate,
-    runs.essence.advanced
-
-);
-
-const conquestTotal = estimatedRuns * 50;
-const goal = [];
-const conquestList = [];
-
-for (const resource of resources) {
-
-    addResource(
-        goal,
-        conquestList,
-        resource
-    );
-
-}
-console.log(goal);
-
-console.log(estimatedRuns);
-
-console.log(conquest);
-
-document.getElementById("farmBoss").textContent =
-    bossSelect.value;
-
-document.getElementById("farmGoal").innerHTML =
-    goal.join("<br>");
-
-document.getElementById("farmConquest").innerHTML =
-    conquestList.join("<br>");
-
-document.getElementById("conquestTotal").textContent =
-    conquestTotal.toLocaleString("sv-SE");
-
-});
-
+    document.getElementById("farmBoss").textContent = bossSelect.value;
+    document.getElementById("farmGoal").innerHTML = goal.join("<br>");
+    document.getElementById("farmConquest").innerHTML = conquestList.join("<br>");
+    document.getElementById("conquestTotal").textContent =
+      conquestTotal.toLocaleString("sv-SE");
+  });
 }
