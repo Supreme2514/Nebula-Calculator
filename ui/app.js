@@ -52,9 +52,19 @@ function populateLevels(selectElement, includeZero) {
 }
 
 function getUpgradePath(start, goal, upgrades) {
-  return upgrades.filter(
-    upgrade => upgrade.order >= start.order && upgrade.order <= goal.order
-  );
+
+    if (start.order === goal.order) {
+
+        return [];
+
+    }
+
+    return upgrades.filter(
+        upgrade =>
+            upgrade.order > start.order &&
+            upgrade.order <= goal.order
+    );
+
 }
 
 function calculateCost(upgradeSteps) {
@@ -121,35 +131,35 @@ function addResource(goal, conquestList, resource) {
   conquestList.push(`${label}: ${conquestCost.toLocaleString("sv-SE")}`);
 }
 
-function calculateBossFarm(missing, selectedBoss) {
+function calculateBossFarm(missing, boss) {
   const runs = {
     shards: {
       primary: calculateRuns(
         missing.shards.primary,
-        selectedBoss.drops["Primary Shard"].average
+        boss.drops["Primary Shard"].average
       ),
       intermediate: calculateRuns(
         missing.shards.intermediate,
-        selectedBoss.drops["Intermediate Shard"].average
+        boss.drops["Intermediate Shard"].average
       ),
       advanced: calculateRuns(
         missing.shards.advanced,
-        selectedBoss.drops["Advanced Shard"].average
+        boss.drops["Advanced Shard"].average
       )
     },
 
     essence: {
       primary: calculateRuns(
         missing.essence.primary,
-        selectedBoss.drops["Primary Essence"].average
+        boss.drops["Primary Essence"].average
       ),
       intermediate: calculateRuns(
         missing.essence.intermediate,
-        selectedBoss.drops["Intermediate Essence"].average
+        boss.drops["Intermediate Essence"].average
       ),
       advanced: calculateRuns(
         missing.essence.advanced,
-        selectedBoss.drops["Advanced Essence"]?.average ?? 0
+        boss.drops["Advanced Essence"]?.average ?? 0
       )
     }
   };
@@ -173,8 +183,6 @@ function calculateBossFarm(missing, selectedBoss) {
     runs.essence.advanced
   );
 
-  // Built from the runs/conquest totals above so addResource has
-  // [label, amount, conquestCost] tuples to work with.
   const resources = [
     ["Primary Shard", runs.shards.primary, conquest.shards.primary],
     ["Intermediate Shard", runs.shards.intermediate, conquest.shards.intermediate],
@@ -199,7 +207,95 @@ function calculateBossFarm(missing, selectedBoss) {
     conquestList
   };
 }
+function getBestBossBy(bossResults, selector) {
 
+    let bestBoss = null;
+
+    for (const [bossName, result] of Object.entries(bossResults)) {
+
+        const value = selector(result);
+
+        if (
+            bestBoss === null ||
+            value < bestBoss.value
+        ) {
+
+            bestBoss = {
+                name: bossName,
+                value,
+                result
+            };
+
+        }
+
+    }
+
+    return bestBoss;
+
+  }
+function sortBossesBy(bossResults, selector) {
+
+    return Object.entries(bossResults)
+
+        .map(([name, result]) => ({
+            name,
+            value: selector(result),
+            result
+        }))
+
+        .sort((a, b) => a.value - b.value);
+
+}    
+function createBossCard(name, result) {
+
+    const container =
+        document.getElementById("bossCards");
+
+    const card =
+        document.createElement("div");
+
+    card.className =
+        "card farming-card";
+
+    card.innerHTML = `
+    <h2>${name}</h2>
+
+    <div class="result-grid">
+
+        <div class="result-item">
+            <label>Estimated Runs</label>
+            <span>${result.estimatedRuns}</span>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="result-item">
+            <label>Goal</label>
+            <div class="resource-list">
+                ${result.goal.join("<br>")}
+            </div>
+        </div>
+          <div class="section-divider"></div>
+
+<div class="result-item">
+    <label>Conquest</label>
+    <div class="resource-list">
+        ${result.conquestList.join("<br>")}
+    </div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="result-item">
+    <label>Maximum Conquest</label>
+    <span>${(result.estimatedRuns * 50).toLocaleString("sv-SE")}</span>
+</div>
+    </div>
+`;
+
+    container.appendChild(card);
+
+}
 // ==============================
 // Startup
 // ==============================
@@ -218,7 +314,31 @@ bossDisplay.innerText = bossSelect.value;
 bossSelect.addEventListener("change", function () {
   bossDisplay.innerText = bossSelect.value;
 });
+const bossButtons =
+    document.getElementById("bossButtons");
 
+bosses.forEach(boss => {
+
+    const button =
+        document.createElement("button");
+
+    button.textContent = boss;
+    button.dataset.boss = boss;
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            bossSelect.value = boss;
+
+            bossDisplay.innerText = boss;
+
+        }
+    );
+
+    bossButtons.appendChild(button);
+
+});
 // ==============================
 // Event Listener
 // ==============================
@@ -262,6 +382,8 @@ function calculate() {
     const totalCost = calculateCost(upgradePath);
     const missing = calculateMissing(totalCost, inventory);
 
+    console.log(upgradePath);
+
     // ==========================
     // Update Result Card
     // ==========================
@@ -295,10 +417,66 @@ function calculate() {
     // ==========================
     // Boss Runs
     // ==========================
-    const selectedBoss = bossDrops[bossSelect.value];
+    const boss = bossDrops[bossSelect.value];
+    const bossResults = {};
+    const bossCards =
+    document.getElementById("bossCards");
 
-    const { runs, conquest, estimatedRuns, goal, conquestList } =
-      calculateBossFarm(missing, selectedBoss);
+      bossCards.innerHTML = "";  
+    for (const bossName of Object.keys(bossDrops)) {
+
+    bossResults[bossName] = calculateBossFarm(
+        missing,
+        bossDrops[bossName]
+    );
+    
+}
+console.log(bossResults);
+    const bestOverall = getBestBossBy(
+      bossResults,
+      result => result.estimatedRuns
+);
+console.log(Object.keys(bossResults));
+
+const overallRanking = sortBossesBy(
+    bossResults,
+    result => result.estimatedRuns
+);
+for (const boss of overallRanking) {
+
+    createBossCard(
+        boss.name,
+        boss.result
+    );
+
+}
+
+console.table(overallRanking);
+
+console.log(bestOverall);
+const bestPrimaryEssence = getBestBossBy(
+    bossResults,
+    result => result.runs.essence.primary
+);
+
+console.log(bestPrimaryEssence);
+
+const bestIntermediateEssence = getBestBossBy(
+    bossResults,
+    result => result.runs.essence.intermediate
+);
+
+console.log(bestIntermediateEssence);
+const bossResult =
+    bossResults[bossSelect.value];
+
+    const {
+    runs,
+    conquest,
+    estimatedRuns,
+    goal,
+    conquestList
+} = bossResult;
 
     const conquestTotal = estimatedRuns * 50;
 

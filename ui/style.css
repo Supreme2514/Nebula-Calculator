@@ -275,3 +275,31 @@ button {
     font-weight: bold;
     color: white;
 }
+#bossCards {
+
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+
+    margin-top: 20px;
+
+}
+.boss-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+.boss-buttons button {
+
+    padding: 8px 16px;
+
+    cursor: pointer;
+
+}
