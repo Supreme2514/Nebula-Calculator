@@ -14,11 +14,12 @@ const bosses = [
 // ==============================
 // DOM Elements
 // ==============================
-const bossSelect = document.getElementById("currentBoss");
 const bossDisplay = document.getElementById("targetBossDisplay");
 const currentLevelSelect = document.getElementById("currentLevel");
 const targetLevelSelect = document.getElementById("targetLevel");
 const calculateButton = document.getElementById("calculateButton");
+let selectedBoss = null;
+let selectedBosses = [];
 
 // ==============================
 // Helper Functions
@@ -199,13 +200,14 @@ function calculateBossFarm(missing, boss) {
     addResource(goal, conquestList, resource);
   }
 
-  return {
+ return {
     runs,
     conquest,
     estimatedRuns,
+    average: estimatedRuns,
     goal,
     conquestList
-  };
+};
 }
 function getBestBossBy(bossResults, selector) {
 
@@ -296,24 +298,132 @@ function createBossCard(name, result) {
     container.appendChild(card);
 
 }
+function renderBossCards(bossResults) {
+
+    const bossCards =
+        document.getElementById("bossCards");
+
+    bossCards.innerHTML = "";
+
+    const ranking = sortBossesBy(
+        bossResults,
+        result => result.estimatedRuns
+    );
+    const bossesToShow =
+    selectedBosses.length === 0
+        ? ranking
+        : ranking.filter(entry =>
+            selectedBosses.includes(entry.name)
+        );
+
+    renderFarmPath(bossesToShow);
+    bossesToShow.forEach(entry => {
+
+        createBossCard(
+            entry.name,
+            entry.result
+        );
+
+    });
+
+}
+function renderFarmPath(bossesToShow) {
+
+    const farmPath =
+        document.getElementById("farmPath");
+
+    farmPath.innerHTML = "";
+
+    bossesToShow.forEach(entry => {
+
+        const row =
+            document.createElement("div");
+
+        row.className = "farm-step";
+
+        row.textContent =
+            `${entry.result.estimatedRuns} × ${entry.name}`;
+
+        farmPath.appendChild(row);
+
+    });
+
+}
+function setActiveBoss() {
+
+    const buttons =
+        document.querySelectorAll("#bossButtons button");
+
+    buttons.forEach(button => {
+
+        if (
+            selectedBosses.includes(
+                button.dataset.boss
+            )
+        ) {
+
+            button.classList.add("active");
+
+        } else {
+
+            button.classList.remove("active");
+
+        }
+
+    });
+
+}
+function updateResourceLabels(boss = null) {
+  console.log("Updating labels:", boss);
+    const name = boss ?? "Boss";
+
+    document.getElementById("labelRes4").textContent =
+        `Primary ${name} Essence`;
+
+    document.getElementById("labelRes5").textContent =
+        `Intermediate ${name} Essence`;
+
+    document.getElementById("labelRes6").textContent =
+        `Advanced ${name} Essence`;
+
+    document.getElementById("labelRes7").textContent =
+        `${name} Scroll`;
+
+}
+function selectBoss(boss) {
+
+    if (selectedBosses.includes(boss)) {
+
+        selectedBosses =
+            selectedBosses.filter(
+                b => b !== boss
+            );
+
+    } else {
+
+        selectedBosses.push(boss);
+
+    }
+
+    selectedBoss = boss;
+
+    setActiveBoss();
+
+    updateResourceLabels(boss);
+
+    bossDisplay.innerText = boss;
+
+    document.getElementById("farmBoss").textContent = boss;
+
+}
 // ==============================
 // Startup
 // ==============================
 populateLevels(currentLevelSelect, true);
 populateLevels(targetLevelSelect, false);
 
-bosses.forEach(boss => {
-  const option = document.createElement("option");
-  option.value = boss;
-  option.textContent = boss;
-  bossSelect.appendChild(option);
-});
+bossDisplay.innerText = "Select a boss";
 
-bossDisplay.innerText = bossSelect.value;
-
-bossSelect.addEventListener("change", function () {
-  bossDisplay.innerText = bossSelect.value;
-});
 const bossButtons =
     document.getElementById("bossButtons");
 
@@ -326,15 +436,13 @@ bosses.forEach(boss => {
     button.dataset.boss = boss;
 
     button.addEventListener(
-        "click",
-        function () {
+    "click",
+    function () {
 
-            bossSelect.value = boss;
+        selectBoss(boss);
 
-            bossDisplay.innerText = boss;
-
-        }
-    );
+    }
+);
 
     bossButtons.appendChild(button);
 
@@ -347,7 +455,13 @@ calculateButton.addEventListener("click", calculate);
 // ==============================
 // Calculate
 // ==============================
-function calculate() {
+function calculate() {if (!selectedBoss) {
+
+    alert("Please select one or more bosses.");
+
+    return;
+
+}
   const currentLevel = currentLevelSelect.value;
   const targetLevel = targetLevelSelect.value;
 
@@ -417,7 +531,7 @@ function calculate() {
     // ==========================
     // Boss Runs
     // ==========================
-    const boss = bossDrops[bossSelect.value];
+    const boss = bossDrops[selectedBoss];
     const bossResults = {};
     const bossCards =
     document.getElementById("bossCards");
@@ -438,22 +552,8 @@ console.log(bossResults);
 );
 console.log(Object.keys(bossResults));
 
-const overallRanking = sortBossesBy(
-    bossResults,
-    result => result.estimatedRuns
-);
-for (const boss of overallRanking) {
+renderBossCards(bossResults);
 
-    createBossCard(
-        boss.name,
-        boss.result
-    );
-
-}
-
-console.table(overallRanking);
-
-console.log(bestOverall);
 const bestPrimaryEssence = getBestBossBy(
     bossResults,
     result => result.runs.essence.primary
@@ -468,7 +568,7 @@ const bestIntermediateEssence = getBestBossBy(
 
 console.log(bestIntermediateEssence);
 const bossResult =
-    bossResults[bossSelect.value];
+    bossResults[selectedBoss];
 
     const {
     runs,
@@ -480,7 +580,7 @@ const bossResult =
 
     const conquestTotal = estimatedRuns * 50;
 
-    document.getElementById("farmBoss").textContent = bossSelect.value;
+    document.getElementById("farmBoss").textContent = selectedBoss;
     document.getElementById("farmGoal").innerHTML = goal.join("<br>");
     document.getElementById("farmConquest").innerHTML = conquestList.join("<br>");
     document.getElementById("conquestTotal").textContent =

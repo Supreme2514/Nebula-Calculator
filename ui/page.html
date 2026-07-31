@@ -22,10 +22,9 @@
         <!-- Current -->
         <div class="card">
             <h2>Your Level</h2>
-            <label for="currentBoss">Boss</label>
-            <select id="currentBoss"></select>
+            
             <div class="level-row">
-                
+            
                 <div>
                     <label for="currentLevel">Level</label>
                     <select id="currentLevel"></select>
@@ -52,15 +51,30 @@
                 <div class="r1"><label>Primary Shard</label><input type="number" id="res1" placeholder="0"></div>
                 <div class="r2"><label>Intermediate Shard</label><input type="number" id="res2" placeholder="0"></div>
                 <div class="r3"><label>Advanced Shard</label><input type="number" id="res3" placeholder="0"></div>
-                <div class="r4"><label>Primary Essence</label><input type="number" id="res4" placeholder="0"></div>
-                <div class="r5"><label>Intermediate Essence</label><input type="number" id="res5" placeholder="0"></div>
-                <div class="r6"><label>Advanced Essence</label><input type="number" id="res6" placeholder="0"></div>
-                <div class="r7"><label>Scroll</label><input type="number" id="res7" placeholder="0"></div>
+                <div class="r4"><label id="labelRes4">Primary Essence</label><input type="number" id="res4" placeholder="0"></div>
+                <div class="r5"><label id="labelRes5">Intermediate Essence</label><input type="number" id="res5" placeholder="0"></div>
+                <div class="r6"><label id="labelRes6">Advanced Essence</label><input type="number" id="res6" placeholder="0"></div>
+                <div class="r7"><label id="labelRes7">Scroll</label><input type="number" id="res7" placeholder="0"></div>
                 <div class="btn"><button id="calculateButton">Calculate</button></div>
             </div>
         </div>
     </div>
 
+    <div class="card farm-path-card">
+
+    <h2>Optimal Farm Path</h2>
+
+    <div id="farmPath">
+
+        <div class="farm-placeholder">
+            Select one or more bosses and press Calculate.
+        </div>
+
+    </div>
+
+</div>
+
+<div id="bossCards"></div>    
     <!-- Results (ligger nu utanför main-layout för full bredd) -->
    <div class="card results-card">
 
@@ -115,7 +129,6 @@
     </div>
 </div>
 
-        <div id="bossCards"></div>
         <div class="card farming-card">
 
     <h2>Farming Goal</h2>

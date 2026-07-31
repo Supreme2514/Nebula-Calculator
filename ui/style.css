@@ -303,3 +303,31 @@ button {
     cursor: pointer;
 
 }
+.boss-buttons button.active {
+
+    background-color: #d4af37;
+
+    color: #111;
+
+    border: 2px solid #fff3b0;
+
+}
+.farm-path-card{
+    margin-bottom:20px;
+}
+
+.farm-placeholder{
+    text-align:center;
+    opacity:.7;
+    padding:20px;
+    font-style:italic;
+}
+.farm-step{
+
+    padding:10px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+    font-weight:600;
+
+}
