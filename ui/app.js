@@ -22,6 +22,7 @@ const calculateButton = document.getElementById("calculateButton");
 let selectedBosses = [];
 let bossLevelRanges = {};
 let activeBoss = null;
+let bossEssenceInventory = {};
 
 // ==============================
 // Helper Functions
@@ -152,82 +153,6 @@ function calculateRuns(needed, averageDrop) {
   return Math.ceil(needed / averageDrop);
 }
 
-function calculateBossFarm(missing, bossName, boss) {
-
-    const essenceNeeded = missing.essence ?? {
-    primary: 0,
-    intermediate: 0,
-    advanced: 0
-};
-
-    const essenceRuns = {
-        primary: calculateRuns(
-            essenceNeeded.primary,
-            boss.drops["Primary Essence"].average
-        ),
-
-        intermediate: calculateRuns(
-            essenceNeeded.intermediate,
-            boss.drops["Intermediate Essence"].average
-        ),
-
-        advanced: calculateRuns(
-            essenceNeeded.advanced,
-            boss.drops["Advanced Essence"]?.average ?? 0
-        )
-    };
-
-    // Essence determines how many runs this boss needs.
-    const estimatedRuns = Math.max(
-        essenceRuns.primary,
-        essenceRuns.intermediate,
-        essenceRuns.advanced
-    );
-
-    return {
-
-        estimatedRuns,
-
-        gained: {
-
-            shards: {
-
-                primary:
-                    estimatedRuns *
-                    boss.drops["Primary Shard"].average,
-
-                intermediate:
-                    estimatedRuns *
-                    boss.drops["Intermediate Shard"].average,
-
-                advanced:
-                    estimatedRuns *
-                    boss.drops["Advanced Shard"].average
-
-            },
-
-            essence: {
-
-                primary:
-                    estimatedRuns *
-                    boss.drops["Primary Essence"].average,
-
-                intermediate:
-                    estimatedRuns *
-                    boss.drops["Intermediate Essence"].average,
-
-                advanced:
-                    estimatedRuns *
-                    (boss.drops["Advanced Essence"]?.average ?? 0)
-
-            }
-
-        },
-
-        conquest: estimatedRuns * 50
-
-    };
-}
 function calculateEssenceFarm(essenceNeeded, boss) {
   console.trace("CALCULATE ESSENCE FARM CALLED", essenceNeeded, boss);
 
@@ -255,24 +180,36 @@ const intermediateRuns = calculateRuns(
 });
 
     return {
-        estimatedRuns,
+    estimatedRuns,
 
-        gained: {
-            shards: {
-                primary:
-                    estimatedRuns *
-                    boss.drops["Primary Shard"].average,
+    gained: {
+        shards: {
+            primary:
+                estimatedRuns *
+                boss.drops["Primary Shard"].average,
 
-                intermediate:
-                    estimatedRuns *
-                    boss.drops["Intermediate Shard"].average,
+            intermediate:
+                estimatedRuns *
+                boss.drops["Intermediate Shard"].average,
 
-                advanced:
-                    estimatedRuns *
-                    boss.drops["Advanced Shard"].average
-            }
+            advanced:
+                estimatedRuns *
+                boss.drops["Advanced Shard"].average
+        },
+
+        essence: {
+            primary:
+                estimatedRuns *
+                boss.drops["Primary Essence"].average,
+
+            intermediate:
+                estimatedRuns *
+                boss.drops["Intermediate Essence"].average,
+
+            advanced: 0
         }
-    };
+    }
+};
 
 }
 
@@ -430,168 +367,314 @@ function createBossCard(name, result) {
   container.appendChild(card);
 }
 
-function renderBossCards(bossResults) {
-  const bossCards = document.getElementById("bossCards");
-  bossCards.innerHTML = "";
+function renderBossCards(farmPath) {
+    const bossCards = document.getElementById("bossCards");
+    bossCards.innerHTML = "";
 
-  const ranking = sortBossesBy(bossResults, result => result.estimatedRuns);
+    const combinedBosses = {};
 
-  const bossesToShow =
-    selectedBosses.length === 0
-      ? ranking
-      : ranking.filter(entry => selectedBosses.includes(entry.name));
+    for (const step of farmPath) {
 
-  bossesToShow.forEach(entry => {
-    createBossCard(entry.name, entry.result);
-  });
-}
+        if (!combinedBosses[step.boss]) {
+            combinedBosses[step.boss] = {
+                estimatedRuns: 0,
 
-function generateFarmPath(
-    missing,
-    bossResults,
-    bossDrops
-) {
-  
-  const steps = [];
-  const remaining = structuredClone(missing);
+                gained: {
+                    shards: {
+                        primary: 0,
+                        intermediate: 0,
+                        advanced: 0
+                    },
 
-  const selectedEntries = Object.entries(bossResults)
-    .filter(([bossName]) => selectedBosses.includes(bossName))
-    .map(([name, result]) => ({ name, result }));
+                    essence: {
+                        primary: 0,
+                        intermediate: 0,
+                        advanced: 0
+                    }
+                }
+            };
+        }
 
-// ==========================
-// Essence Phase
-// ==========================
+        const boss = combinedBosses[step.boss];
 
-for (const entry of selectedEntries) {
+        boss.estimatedRuns += step.runs || 0;
 
-    const essenceNeeded =
-        remaining.essence[entry.name];
+        if (step.gained?.shards) {
+            boss.gained.shards.primary +=
+                step.gained.shards.primary || 0;
 
-    if (
-        !essenceNeeded ||
-        (
-            essenceNeeded.primary <= 0 &&
-            essenceNeeded.intermediate <= 0 &&
-            essenceNeeded.advanced <= 0
-        )
-    ) {
-        continue;
+            boss.gained.shards.intermediate +=
+                step.gained.shards.intermediate || 0;
+
+            boss.gained.shards.advanced +=
+                step.gained.shards.advanced || 0;
+        }
+
+        if (step.gained?.essence) {
+            boss.gained.essence.primary +=
+                step.gained.essence.primary || 0;
+
+            boss.gained.essence.intermediate +=
+                step.gained.essence.intermediate || 0;
+
+            boss.gained.essence.advanced +=
+                step.gained.essence.advanced || 0;
+        }
     }
 
-    const result = calculateEssenceFarm(
-        essenceNeeded,
-        bossDrops[entry.name]
-    );
+    // Valda bossar
+    for (const bossName of selectedBosses) {
 
-    steps.push({
-        boss: entry.name,
-        runs: result.estimatedRuns,
-        phase: "Essence",
-        gained: result.gained
-    });
+        const result = combinedBosses[bossName];
 
-    // Essence for this boss is now complete
-    remaining.essence[entry.name].primary = 0;
-    remaining.essence[entry.name].intermediate = 0;
-    remaining.essence[entry.name].advanced = 0;
+        if (!result) continue;
 
-    // Shards gained during the Essence farming
-    // also count toward the shard goal
-    remaining.shards.primary = Math.max(
-        0,
-        remaining.shards.primary -
-        result.gained.shards.primary
-    );
+        createBossCard(
+            bossName,
+            result
+        );
+    }
 
-    remaining.shards.intermediate = Math.max(
-        0,
-        remaining.shards.intermediate -
-        result.gained.shards.intermediate
-    );
-
-    remaining.shards.advanced = Math.max(
-        0,
-        remaining.shards.advanced -
-        result.gained.shards.advanced
-    );
-}
-// ==========================
-// Shard Phase
-// ==========================
-
-if (
-    remaining.shards.primary > 0 ||
-    remaining.shards.intermediate > 0 ||
-    remaining.shards.advanced > 0
-) {
-
-    const result = calculateShardFarm(
-    remaining,
-    bossDrops["Alkaid"]
-);
-
-    steps.push({
-    boss: "Alkaid",
-    runs: result.estimatedRuns,
-    phase: "Shards",
-    gained: result.gained
-});
-
-}
-  return steps;
+    // Alkaid används automatiskt för shard farming
+    // även om användaren inte valt Alkaid.
+    if (
+        !selectedBosses.includes("Alkaid") &&
+        combinedBosses["Alkaid"] &&
+        combinedBosses["Alkaid"].estimatedRuns > 0
+    ) {
+        createBossCard(
+            "Alkaid",
+            combinedBosses["Alkaid"]
+        );
+    }
 }
 
+function generateFarmPath(bossMissing, bossDrops) {
+
+    const steps = [];
+
+    // ==========================
+    // Shared shard pool
+    // ==========================
+
+    const remainingShards = {
+        primary: 0,
+        intermediate: 0,
+        advanced: 0
+    };
+
+    // Sum shards needed from all selected bosses.
+    for (const bossName of selectedBosses) {
+
+        const missing = bossMissing[bossName];
+
+        if (!missing) continue;
+
+        remainingShards.primary += missing.shards.primary;
+        remainingShards.intermediate += missing.shards.intermediate;
+        remainingShards.advanced += missing.shards.advanced;
+    }
+
+    // ==========================
+    // Essence Phase
+    // Lowest -> highest
+    // ==========================
+
+    const orderedBosses = [...selectedBosses].sort(
+        (a, b) => bosses.indexOf(a) - bosses.indexOf(b)
+    );
+
+    for (const bossName of orderedBosses) {
+
+        const missing = bossMissing[bossName];
+
+        if (!missing) continue;
+
+        const essenceNeeded = missing.essence;
+
+        const needsEssence =
+            essenceNeeded.primary > 0 ||
+            essenceNeeded.intermediate > 0 ||
+            essenceNeeded.advanced > 0;
+
+        // No essence needed
+        if (!needsEssence) {
+            steps.push({
+                boss: bossName,
+                runs: 0,
+                phase: "Essence",
+                status: "Complete",
+                gained: {
+                    shards: {
+                        primary: 0,
+                        intermediate: 0,
+                        advanced: 0
+                    }
+                }
+            });
+
+            continue;
+        }
+
+        // Farm this boss for its essence.
+        const result = calculateEssenceFarm(
+            essenceNeeded,
+            bossDrops[bossName]
+        );
+
+        steps.push({
+            boss: bossName,
+            runs: result.estimatedRuns,
+            phase: "Essence",
+            gained: result.gained
+        });
+
+        // Shards obtained during essence farming
+        // count toward the shared shard requirement.
+        remainingShards.primary = Math.max(
+            0,
+            remainingShards.primary -
+            result.gained.shards.primary
+        );
+
+        remainingShards.intermediate = Math.max(
+            0,
+            remainingShards.intermediate -
+            result.gained.shards.intermediate
+        );
+
+        remainingShards.advanced = Math.max(
+            0,
+            remainingShards.advanced -
+            result.gained.shards.advanced
+        );
+    }
+
+    // ==========================
+    // Shard Phase
+    // ==========================
+
+    if (
+        remainingShards.primary > 0 ||
+        remainingShards.intermediate > 0 ||
+        remainingShards.advanced > 0
+    ) {
+
+        const result = calculateShardFarm(
+            {
+                shards: remainingShards
+            },
+            bossDrops["Alkaid"]
+        );
+
+        steps.push({
+            boss: "Alkaid",
+            runs: result.estimatedRuns,
+            phase: "Shards",
+            gained: result.gained
+        });
+    }
+
+    return steps;
+}
 function renderFarmPath(steps) {
-  const farmPath = document.getElementById("farmPath");
-  farmPath.innerHTML = "";
+    const farmPath = document.getElementById("farmPath");
+    farmPath.innerHTML = "";
 
-  steps.forEach(step => {
-    const row = document.createElement("div");
-    row.className = "farm-step";
+    steps.forEach((step, index) => {
 
-    const completed = [];
+        const row = document.createElement("div");
+        row.className = "farm-step";
 
-if (step.completed?.primaryEssence)
-    completed.push("✓ Primary Essence");
+        const completed = [];
 
-if (step.completed?.intermediateEssence)
-    completed.push("✓ Intermediate Essence");
+        if (step.completed?.primaryEssence)
+            completed.push("✓ Primary Essence");
 
-if (step.completed?.advancedEssence)
-    completed.push("✓ Advanced Essence");
+        if (step.completed?.intermediateEssence)
+            completed.push("✓ Intermediate Essence");
 
-if (step.completed?.primaryShard)
-    completed.push("✓ Primary Shard");
+        if (step.completed?.advancedEssence)
+            completed.push("✓ Advanced Essence");
 
-if (step.completed?.intermediateShard)
-    completed.push("✓ Intermediate Shard");
+        if (step.completed?.primaryShard)
+            completed.push("✓ Primary Shard");
 
-if (step.completed?.advancedShard)
-    completed.push("✓ Advanced Shard");
+        if (step.completed?.intermediateShard)
+            completed.push("✓ Intermediate Shard");
 
-row.innerHTML = `
-    <strong>${step.runs} × ${step.boss}</strong><br>
+        if (step.completed?.advancedShard)
+            completed.push("✓ Advanced Shard");
 
-    <small>${step.phase}</small>
+        const phaseLabel =
+            step.phase === "Essence"
+                ? "Essence farming"
+                : "Remaining shards";
 
-    <br><br>
+        row.innerHTML = `
+            <div class="farm-step-number">
+                ${String(index + 1).padStart(2, "0")}
+            </div>
 
-    <small>
-        +${Math.round(step.gained.shards.primary)} Primary Shards<br>
-        +${Math.round(step.gained.shards.intermediate)} Intermediate Shards<br>
-        +${Math.round(step.gained.shards.advanced)} Advanced Shards
-    </small>
+            <div class="farm-step-content">
 
-    <br><br>
+                <div class="farm-step-title">
+                    ${step.boss}
+                </div>
 
-    <small>
-        ${completed.join("<br>")}
-    </small>
-`;
+                <div class="farm-step-phase">
+                    ${phaseLabel}
+                </div>
 
-    farmPath.appendChild(row);
-  });
+                <div class="farm-step-divider"></div>
+
+                <div class="farm-step-runs">
+                    <span class="farm-step-label">Kills</span>
+                    <strong>${step.runs.toLocaleString("sv-SE")}</strong>
+                </div>
+
+                <div class="farm-step-loot-title">
+                    Shards gained
+                </div>
+
+                <div class="farm-step-loot">
+                    <div>
+                        <span>Primary Shard</span>
+                        <strong>
+                            +${Math.round(step.gained.shards.primary).toLocaleString("sv-SE")}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Intermediate Shard</span>
+                        <strong>
+                            +${Math.round(step.gained.shards.intermediate).toLocaleString("sv-SE")}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Advanced Shard</span>
+                        <strong>
+                            +${Math.round(step.gained.shards.advanced).toLocaleString("sv-SE")}
+                        </strong>
+                    </div>
+                </div>
+
+                ${
+                    completed.length
+                        ? `
+                            <div class="farm-step-complete">
+                                ${completed.join("<br>")}
+                            </div>
+                          `
+                        : ""
+                }
+
+            </div>
+        `;
+
+        farmPath.appendChild(row);
+    });
 }
 
 function setActiveBoss() {
@@ -638,8 +721,72 @@ function loadActiveBossLevels() {
         targetLevelSelect.value = "1-1";
     }
 }
+
+function saveActiveBossEssence() {
+    if (!activeBoss) return;
+
+    bossEssenceInventory[activeBoss] = {
+        primary: Number(document.getElementById("res4").value) || 0,
+        intermediate: Number(document.getElementById("res5").value) || 0,
+        advanced: Number(document.getElementById("res6").value) || 0
+    };
+}
+
+function loadActiveBossEssence() {
+    if (!activeBoss) {
+        document.getElementById("res4").value = 0;
+        document.getElementById("res5").value = 0;
+        document.getElementById("res6").value = 0;
+        return;
+    }
+
+    const saved = bossEssenceInventory[activeBoss];
+
+    if (saved) {
+        document.getElementById("res4").value = saved.primary;
+        document.getElementById("res5").value = saved.intermediate;
+        document.getElementById("res6").value = saved.advanced;
+    } else {
+        document.getElementById("res4").value = 0;
+        document.getElementById("res5").value = 0;
+        document.getElementById("res6").value = 0;
+    }
+}
+function updateBossImage(bossName) {
+    const bossImage = document.getElementById("bossImage");
+
+    if (!bossImage) return;
+
+    if (!bossName) {
+        bossImage.src = "../assets/lord_dubhe.png";
+        bossImage.alt = "Lord Dubhe";
+        return;
+    }
+
+    const filename = `../assets/lord_${bossName.toLowerCase()}.png`;
+
+    bossImage.src = filename;
+    bossImage.alt = `Lord ${bossName}`;
+}
+// Event listeners
 currentLevelSelect.addEventListener("change", saveActiveBossLevels);
 targetLevelSelect.addEventListener("change", saveActiveBossLevels);
+
+document.getElementById("res4").addEventListener(
+    "change",
+    saveActiveBossEssence
+);
+
+document.getElementById("res5").addEventListener(
+    "change",
+    saveActiveBossEssence
+);
+
+document.getElementById("res6").addEventListener(
+    "change",
+    saveActiveBossEssence
+);
+
 function updateResourceLabels(boss = null) {
   const name = boss ?? "Boss";
 
@@ -686,12 +833,14 @@ function selectBoss(boss) {
     loadActiveBossLevels();
 
     setActiveBoss();
+    updateBossImage(activeBoss);
+
+    loadActiveBossLevels();
+    loadActiveBossEssence();
 
     if (activeBoss) {
 
         updateResourceLabels(activeBoss);
-
-        bossDisplay.innerText = activeBoss;
 
         document.getElementById("farmBoss").textContent =
             activeBoss;
@@ -699,8 +848,6 @@ function selectBoss(boss) {
     } else {
 
         updateResourceLabels(null);
-
-        bossDisplay.innerText = "-";
 
         document.getElementById("farmBoss").textContent = "-";
     }
@@ -711,10 +858,8 @@ function selectBoss(boss) {
 populateLevels(currentLevelSelect, true);
 populateLevels(targetLevelSelect, false);
 
-bossDisplay.innerText = "Select a boss";
-
 const bossButtons = document.getElementById("bossButtons");
-
+console.log("BOSS BUTTONS INIT", bossButtons, bosses);
 bosses.forEach(boss => {
   const button = document.createElement("button");
   button.textContent = boss;
@@ -768,7 +913,24 @@ const activeBoss = selectedBosses.at(-1);
     fetch("../data/bossDrops.json").then(response => response.json())
   ]).then(([costs, bossDrops]) => {
     
-    const bossMissing = {};
+const bossCosts = {};
+const bossMissing = {};
+
+const totalCost = {
+    shards: {
+        primary: 0,
+        intermediate: 0,
+        advanced: 0
+    },
+    coins: 0,
+    essence: {
+        primary: 0,
+        intermediate: 0,
+        advanced: 0
+    },
+    scrolls: 0,
+    ingots: 0
+};
 
 for (const bossName of selectedBosses) {
 
@@ -790,28 +952,65 @@ for (const bossName of selectedBosses) {
         costs
     );
 
-    const totalCost = calculateCost(upgradePath);
+    const cost = calculateCost(upgradePath);
 
-    bossMissing[bossName] = calculateMissing(
-        totalCost,
-        inventory,
-        bossName
-    );
-    console.log(
-    "BOSS MISSING",
-    bossName,
-    bossMissing[bossName]
+    bossCosts[bossName] = cost;
+
+    const essenceInventory = bossEssenceInventory[bossName] || {
+    primary: 0,
+    intermediate: 0,
+    advanced: 0
+};
+
+bossMissing[bossName] = calculateMissing(
+    cost,
+    {
+        shards: {
+            primary: 0,
+            intermediate: 0,
+            advanced: 0
+        },
+        essence: essenceInventory,
+        scrolls: 0,
+        ingots: 0,
+        coins: 0
+    },
+    bossName
 );
+
+    // Combine total cost
+    totalCost.shards.primary += cost.shards.primary;
+    totalCost.shards.intermediate += cost.shards.intermediate;
+    totalCost.shards.advanced += cost.shards.advanced;
+
+    totalCost.coins += cost.coins;
+
+    totalCost.essence.primary += cost.essence.primary;
+    totalCost.essence.intermediate += cost.essence.intermediate;
+    totalCost.essence.advanced += cost.essence.advanced;
+
+    totalCost.scrolls += cost.scrolls;
+    totalCost.ingots += cost.ingots;
 }
-   // ==========================
+
+// ==========================
 // Update Result Card
 // ==========================
 
 const totalMissing = {
     shards: {
-        primary: 0,
-        intermediate: 0,
-        advanced: 0
+        primary: Math.max(
+            0,
+            totalCost.shards.primary - inventory.shards.primary
+        ),
+        intermediate: Math.max(
+            0,
+            totalCost.shards.intermediate - inventory.shards.intermediate
+        ),
+        advanced: Math.max(
+            0,
+            totalCost.shards.advanced - inventory.shards.advanced
+        )
     },
 
     essence: {
@@ -820,28 +1019,48 @@ const totalMissing = {
         advanced: 0
     },
 
-    scrolls: 0,
-    ingots: 0,
-    coins: 0
-};
+    scrolls: Math.max(
+        0,
+        totalCost.scrolls - inventory.scrolls
+    ),
 
+    ingots: Math.max(
+        0,
+        totalCost.ingots - inventory.ingots
+    ),
+
+    coins: Math.max(
+        0,
+        totalCost.coins - inventory.coins
+    )
+};
 for (const bossName of selectedBosses) {
 
-    const missing = bossMissing[bossName];
+    const cost = bossCosts[bossName];
 
-    if (!missing) continue;
+    if (!cost) continue;
 
-    totalMissing.shards.primary += missing.shards.primary;
-    totalMissing.shards.intermediate += missing.shards.intermediate;
-    totalMissing.shards.advanced += missing.shards.advanced;
+    const essenceInventory =
+        bossEssenceInventory[bossName] || {
+            primary: 0,
+            intermediate: 0,
+            advanced: 0
+        };
 
-    totalMissing.essence.primary += missing.essence.primary;
-    totalMissing.essence.intermediate += missing.essence.intermediate;
-    totalMissing.essence.advanced += missing.essence.advanced;
+    totalMissing.essence.primary += Math.max(
+        0,
+        cost.essence.primary - essenceInventory.primary
+    );
 
-    totalMissing.scrolls += missing.scrolls;
-    totalMissing.ingots += missing.ingots;
-    totalMissing.coins += missing.coins;
+    totalMissing.essence.intermediate += Math.max(
+        0,
+        cost.essence.intermediate - essenceInventory.intermediate
+    );
+
+    totalMissing.essence.advanced += Math.max(
+        0,
+        cost.essence.advanced - essenceInventory.advanced
+    );
 }
 
 document.getElementById("resultPrimaryShard").textContent =
@@ -853,58 +1072,130 @@ document.getElementById("resultIntermediateShard").textContent =
 document.getElementById("resultAdvancedShard").textContent =
     totalMissing.shards.advanced.toLocaleString("sv-SE");
 
-document.getElementById("resultPrimaryEssence").textContent =
-    totalMissing.essence.primary.toLocaleString("sv-SE");
-
-document.getElementById("resultIntermediateEssence").textContent =
-    totalMissing.essence.intermediate.toLocaleString("sv-SE");
-
-document.getElementById("resultAdvancedEssence").textContent =
-    totalMissing.essence.advanced.toLocaleString("sv-SE");
-
-document.getElementById("resultScrolls").textContent =
-    totalMissing.scrolls.toLocaleString("sv-SE");
-
-document.getElementById("resultIngots").textContent =
-    totalMissing.ingots.toLocaleString("sv-SE");
-
-document.getElementById("resultCoins").textContent =
-    totalMissing.coins.toLocaleString("sv-SE");
-
-    // ==========================
-    // Boss Runs
-    // ==========================
-    const bossResults = {};
-
-    const bossCards = document.getElementById("bossCards");
-    bossCards.innerHTML = "";
+const bossResourceSections =
+    document.getElementById("bossResourceSections");
+console.log(
+    "bossResourceSections:",
+    bossResourceSections
+);
+bossResourceSections.innerHTML = "";
 
 for (const bossName of selectedBosses) {
 
-    const missingForBoss = bossMissing[bossName];
+    const cost = bossCosts[bossName];
+    const missing = bossMissing[bossName];
 
-    if (!missingForBoss) continue;
+    if (!cost || !missing) continue;
 
-    bossResults[bossName] = calculateBossFarm(
-        missingForBoss,
-        bossName,
-        bossDrops[bossName]
-    );
+    const section = document.createElement("div");
+    section.className = "boss-resource-section";
+
+    section.innerHTML = `
+    <h3>${bossName}</h3>
+
+    <div class="boss-resource-table">
+
+        <div class="boss-image-cell">
+            <div class="boss-image-placeholder"></div>
+        </div>
+
+        <div class="boss-resource-row">
+            <div class="resource-cell">
+                <label>Primary Essence</label>
+                <p>
+                    ${missing.essence.primary.toLocaleString("sv-SE")}
+                </p>
+            </div>
+
+            <div class="resource-cell">
+                <label>Intermediate Essence</label>
+                <p>
+                    ${missing.essence.intermediate.toLocaleString("sv-SE")}
+                </p>
+            </div>
+
+            <div class="resource-cell non-farmable">
+                <label>Advanced Essence</label>
+                <p>
+                    ${missing.essence.advanced.toLocaleString("sv-SE")}
+                </p>
+                <small>Not farmable</small>
+            </div>
+        </div>
+
+        <div class="boss-resource-row">
+            <div class="resource-cell non-farmable">
+                <label>Scrolls</label>
+                <p>
+                    ${cost.scrolls.toLocaleString("sv-SE")}
+                </p>
+                <small>Not farmable</small>
+            </div>
+
+            <div class="resource-cell">
+                <label>Ingots</label>
+                <p>
+                    ${cost.ingots.toLocaleString("sv-SE")}
+                </p>
+            </div>
+
+            <div class="resource-cell">
+                <label>Coins</label>
+                <p>
+                    ${cost.coins.toLocaleString("sv-SE")}
+                </p>
+            </div>
+        </div>
+
+    </div>
+`;
+
+    bossResourceSections.appendChild(section);
 }
 
-    const bestOverall = getBestBossBy(
-      bossResults,
-      result => result.estimatedRuns
-    );
-    /*
-    const farmPath = generateFarmPath(
+// ==========================
+// Boss Runs
+// ==========================
+
+const farmPath = generateFarmPath(
     bossMissing,
-    bossResults,
     bossDrops
 );
-    
-    renderFarmPath(farmPath);
-*/
-    renderBossCards(bossResults);
-  });
+
+renderFarmPath(farmPath);
+renderBossCards(farmPath);
+
+});
 }
+const farmViewButton = document.getElementById("farmViewButton");
+const resourcesViewButton = document.getElementById("resourcesViewButton");
+
+const farmView = document.getElementById("farmView");
+const resourcesView = document.getElementById("resourcesView");
+
+farmViewButton.addEventListener("click", () => {
+    farmView.style.display = "block";
+    resourcesView.style.display = "none";
+
+    farmViewButton.classList.add("active");
+    resourcesViewButton.classList.remove("active");
+});
+
+resourcesViewButton.addEventListener("click", () => {
+    farmView.style.display = "none";
+    resourcesView.style.display = "block";
+
+    farmViewButton.classList.remove("active");
+    resourcesViewButton.classList.add("active");
+});
+document.querySelectorAll(
+    '#res1, #res2, #res3, #res4, #res5, #res6, #res7'
+).forEach(input => {
+
+    input.addEventListener("focus", () => {
+        if (input.value === "0") {
+            input.select();
+        }
+    });
+
+});
