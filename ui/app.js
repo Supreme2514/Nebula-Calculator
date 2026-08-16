@@ -306,7 +306,12 @@ function createBossCard(name, result) {
   const container = document.getElementById("bossCards");
 
   const card = document.createElement("div");
-  card.className = "card farming-card";
+card.className = "card farming-card";
+
+card.style.setProperty(
+    "--boss-image",
+    `url("../assets/${name.toLowerCase()}.png")`
+);
 
   const gained = result.gained;
 
@@ -581,7 +586,25 @@ function renderFarmPath(steps) {
     const farmPath = document.getElementById("farmPath");
     farmPath.innerHTML = "";
 
+    let currentPhase = null;
+
     steps.forEach((step, index) => {
+
+        // Add a divider when we move from Essence farming to Shard farming
+        if (step.phase !== currentPhase) {
+
+            if (step.phase === "Shards") {
+                const divider = document.createElement("div");
+                divider.className = "farm-phase-divider";
+                divider.innerHTML = `
+                    <span>Shard Farming</span>
+                `;
+
+                farmPath.appendChild(divider);
+            }
+
+            currentPhase = step.phase;
+        }
 
         const row = document.createElement("div");
         row.className = "farm-step";
@@ -589,22 +612,60 @@ function renderFarmPath(steps) {
         const completed = [];
 
         if (step.completed?.primaryEssence)
-            completed.push("✓ Primary Essence");
+            completed.push("Primary Essence");
 
         if (step.completed?.intermediateEssence)
-            completed.push("✓ Intermediate Essence");
+            completed.push("Intermediate Essence");
 
         if (step.completed?.advancedEssence)
-            completed.push("✓ Advanced Essence");
+            completed.push("Advanced Essence");
 
         if (step.completed?.primaryShard)
-            completed.push("✓ Primary Shard");
+            completed.push("Primary Shard");
 
         if (step.completed?.intermediateShard)
-            completed.push("✓ Intermediate Shard");
+            completed.push("Intermediate Shard");
 
         if (step.completed?.advancedShard)
-            completed.push("✓ Advanced Shard");
+            completed.push("Advanced Shard");
+
+        // --------------------------------
+        // Complete step
+        // --------------------------------
+
+        if (step.status === "Complete") {
+
+            row.className = "farm-step farm-step-complete";
+
+            row.innerHTML = `
+                <div class="farm-step-number">
+                    ${String(index + 1).padStart(2, "0")}
+                </div>
+
+                <div class="farm-step-content">
+
+                    <div class="farm-step-title">
+                        ${step.boss}
+                    </div>
+
+                    <div class="farm-step-phase">
+                        Essence complete
+                    </div>
+
+                    <div class="farm-step-complete-message">
+                        ✓ Inventory already covers required essence
+                    </div>
+
+                </div>
+            `;
+
+            farmPath.appendChild(row);
+            return;
+        }
+
+        // --------------------------------
+        // Normal farming step
+        // --------------------------------
 
         const phaseLabel =
             step.phase === "Essence"
@@ -630,7 +691,9 @@ function renderFarmPath(steps) {
 
                 <div class="farm-step-runs">
                     <span class="farm-step-label">Kills</span>
-                    <strong>${step.runs.toLocaleString("sv-SE")}</strong>
+                    <strong>
+                        ${step.runs.toLocaleString("sv-SE")}
+                    </strong>
                 </div>
 
                 <div class="farm-step-loot-title">
@@ -638,37 +701,35 @@ function renderFarmPath(steps) {
                 </div>
 
                 <div class="farm-step-loot">
+
                     <div>
                         <span>Primary Shard</span>
                         <strong>
-                            +${Math.round(step.gained.shards.primary).toLocaleString("sv-SE")}
+                            +${Math.round(
+                                step.gained.shards.primary
+                            ).toLocaleString("sv-SE")}
                         </strong>
                     </div>
 
                     <div>
                         <span>Intermediate Shard</span>
                         <strong>
-                            +${Math.round(step.gained.shards.intermediate).toLocaleString("sv-SE")}
+                            +${Math.round(
+                                step.gained.shards.intermediate
+                            ).toLocaleString("sv-SE")}
                         </strong>
                     </div>
 
                     <div>
                         <span>Advanced Shard</span>
                         <strong>
-                            +${Math.round(step.gained.shards.advanced).toLocaleString("sv-SE")}
+                            +${Math.round(
+                                step.gained.shards.advanced
+                            ).toLocaleString("sv-SE")}
                         </strong>
                     </div>
-                </div>
 
-                ${
-                    completed.length
-                        ? `
-                            <div class="farm-step-complete">
-                                ${completed.join("<br>")}
-                            </div>
-                          `
-                        : ""
-                }
+                </div>
 
             </div>
         `;
@@ -827,29 +888,36 @@ function selectBoss(boss) {
         // select it and make it active.
         selectedBosses.push(boss);
         activeBoss = boss;
+
+        // Give newly selected bosses their default level range
+        if (!bossLevelRanges[boss]) {
+            bossLevelRanges[boss] = {
+                current: "0",
+                target: "1-1"
+            };
+        }
+
+        // Give newly selected bosses a separate essence inventory
+        if (!bossEssenceInventory[boss]) {
+            bossEssenceInventory[boss] = {
+                primary: 0,
+                intermediate: 0,
+                advanced: 0
+            };
+        }
     }
 
-    // Load saved levels for the new active boss
+    // Load data for the new active boss
     loadActiveBossLevels();
+    loadActiveBossEssence();
 
     setActiveBoss();
     updateBossImage(activeBoss);
 
-    loadActiveBossLevels();
-    loadActiveBossEssence();
-
     if (activeBoss) {
-
         updateResourceLabels(activeBoss);
-
-        document.getElementById("farmBoss").textContent =
-            activeBoss;
-
     } else {
-
         updateResourceLabels(null);
-
-        document.getElementById("farmBoss").textContent = "-";
     }
 }
 // ==============================
@@ -992,6 +1060,9 @@ bossMissing[bossName] = calculateMissing(
     totalCost.scrolls += cost.scrolls;
     totalCost.ingots += cost.ingots;
 }
+console.log("SELECTED BOSSES:", selectedBosses);
+console.log("BOSS LEVEL RANGES:", bossLevelRanges);
+console.log("BOSS MISSING:", bossMissing);
 
 // ==========================
 // Update Result Card
@@ -1095,8 +1166,8 @@ for (const bossName of selectedBosses) {
 
     <div class="boss-resource-table">
 
-        <div class="boss-image-cell">
-            <div class="boss-image-placeholder"></div>
+      <div class="boss-image-cell">
+            <img class="boss-image-placeholder" src="../assets/${bossName.toLowerCase()}_frame.png" alt="${bossName}">
         </div>
 
         <div class="boss-resource-row">
