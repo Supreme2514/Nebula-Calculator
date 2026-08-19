@@ -454,6 +454,116 @@ function renderBossCards(farmPath) {
     }
 }
 
+function renderSweep(bossDrops, remainingShards) {
+
+    const sweepResult = document.getElementById("sweepResult");
+
+    const sweepBosses = ["Alkaid"];
+
+    if (document.getElementById("sweepMizar").checked) {
+        sweepBosses.push("Mizar");
+    }
+
+    if (document.getElementById("sweepAlioth").checked) {
+        sweepBosses.push("Alioth");
+    }
+
+    const shardsPerSweep = {
+        primary: 0,
+        intermediate: 0,
+        advanced: 0
+    };
+
+    for (const bossName of sweepBosses) {
+
+        const drops = bossDrops[bossName];
+
+        if (!drops) continue;
+
+        shardsPerSweep.primary +=
+            drops.drops["Primary Shard"].average;
+
+        shardsPerSweep.intermediate +=
+            drops.drops["Intermediate Shard"].average;
+
+        shardsPerSweep.advanced +=
+            drops.drops["Advanced Shard"].average;
+    }
+
+    const primarySweeps = calculateRuns(
+        remainingShards.primary,
+        shardsPerSweep.primary
+    );
+
+    const intermediateSweeps = calculateRuns(
+        remainingShards.intermediate,
+        shardsPerSweep.intermediate
+    );
+
+    const advancedSweeps = calculateRuns(
+        remainingShards.advanced,
+        shardsPerSweep.advanced
+    );
+
+    const sweepsRequired = Math.max(
+        primarySweeps,
+        intermediateSweeps,
+        advancedSweeps
+    );
+
+    const totalConquest =
+        sweepsRequired *
+        sweepBosses.length *
+        50;
+
+    sweepResult.innerHTML = `
+        <div class="sweep-shards">
+            <div class="sweep-result-item">
+                <label>Primary Shards</label>
+                <strong>
+                    +${Math.round(
+                        sweepsRequired * shardsPerSweep.primary
+                    ).toLocaleString("sv-SE")}
+                </strong>
+            </div>
+
+            <div class="sweep-result-item">
+                <label>Intermediate Shards</label>
+                <strong>
+                    +${Math.round(
+                        sweepsRequired * shardsPerSweep.intermediate
+                    ).toLocaleString("sv-SE")}
+                </strong>
+            </div>
+
+            <div class="sweep-result-item">
+                <label>Advanced Shards</label>
+                <strong>
+                    +${Math.round(
+                        sweepsRequired * shardsPerSweep.advanced
+                    ).toLocaleString("sv-SE")}
+                </strong>
+            </div>
+        </div>
+
+        <div class="sweep-summary">
+            <div class="sweep-result-item">
+                <label>Sweeps Required</label>
+                <strong>
+                    ${sweepsRequired.toLocaleString("sv-SE")}
+                </strong>
+            </div>
+
+            <div class="sweep-result-item">
+                <label>Total Conquest</label>
+                <strong>
+                    ${totalConquest.toLocaleString("sv-SE")}
+                </strong>
+            </div>
+        </div>
+    `;
+}
+
 function generateFarmPath(bossMissing, bossDrops) {
 
     const steps = [];
@@ -847,6 +957,16 @@ document.getElementById("res6").addEventListener(
     "change",
     saveActiveBossEssence
 );
+const sweepToggle = document.getElementById("sweepToggle");
+const sweepContent = document.getElementById("sweepContent");
+const sweepArrow = document.getElementById("sweepArrow");
+
+sweepToggle.addEventListener("click", () => {
+
+    const isOpen = sweepContent.classList.toggle("open");
+
+    sweepArrow.textContent = isOpen ? "▾" : "▸";
+});
 
 function updateResourceLabels(boss = null) {
   const name = boss ?? "Boss";
@@ -1235,6 +1355,7 @@ const farmPath = generateFarmPath(
 
 renderFarmPath(farmPath);
 renderBossCards(farmPath);
+renderSweep(bossDrops, totalMissing.shards);
 
 });
 }
