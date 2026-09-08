@@ -15,13 +15,56 @@
         <h1>Nebula Calculator</h1>
         <div class="ornament"></div>
     </header>
+    <div class="character-bar">
+    <button id="characterButton" class="character-button">
+        <span id="characterButtonLabel">+ New Character</span>
+        <span class="character-arrow">▾</span>
+    </button>
+
+    <div id="characterDropdown" class="character-dropdown">
+        <div id="characterList" class="character-list"></div>
+
+        <div class="character-divider"></div>
+
+        <div class="character-new">
+            <input type="text" id="newCharacterName" placeholder="Character name" maxlength="20">
+            <div class="character-class-options">
+                <button type="button" class="character-class-option" data-class="archer">
+                    <img src="../assets/classes/archer.png" alt="Archer">
+                </button>
+                <button type="button" class="character-class-option" data-class="assassin">
+                    <img src="../assets/classes/assassin.png" alt="Assassin">
+                </button>
+                <button type="button" class="character-class-option" data-class="mage">
+                    <img src="../assets/classes/mage.png" alt="Mage">
+                </button>
+                <button type="button" class="character-class-option" data-class="taoist">
+                    <img src="../assets/classes/taoist.png" alt="Taoist">
+                </button>
+                <button type="button" class="character-class-option" data-class="warrior">
+                    <img src="../assets/classes/warrior.png" alt="Warrior">
+                </button>
+            </div>
+            <button type="button" id="createCharacterButton">Create Character</button>
+        </div>
+    </div>
+</div>
      <!-- Boss Buttons -->
     <div id="bossButtons" class="boss-buttons"></div>
+    
     <div class="main-layout">
        
         <!-- Level Selection -->
 <div class="card level-card">
     <h2>Star Node</h2>
+
+    <div class="star-node-image">
+        <img
+            id="starNodeImage"
+            src="../assets/star-nodes/n8.png"
+            alt="Star Node 1"
+        >
+    </div>
 
     <div class="level-selection">
         <div>
@@ -40,22 +83,64 @@
 <div class="card boss-image-card">
     <img
         id="bossImage"
-        src="../assets/lord_dubhe.png"
-        alt="Lord Dubhe"
+        src="../assets/bosses/default.png"
+        alt="Default Boss"
     >
 </div>
 
-        <!-- Current Resources -->
+                <!-- Current Resources -->
         <div class="card">
             <h2>Your Inventory</h2>
             <div class="resource-grid">
-                <div class="r1"><label>Primary Shard</label><input type="number" id="res1" placeholder="0"></div>
-                <div class="r2"><label>Intermediate Shard</label><input type="number" id="res2" placeholder="0"></div>
-                <div class="r3"><label>Advanced Shard</label><input type="number" id="res3" placeholder="0"></div>
-                <div class="r4"><label id="labelRes4">Primary Essence</label><input type="number" id="res4" placeholder="0"></div>
-                <div class="r5"><label id="labelRes5">Intermediate Essence</label><input type="number" id="res5" placeholder="0"></div>
-                <div class="r6"><label id="labelRes6">Advanced Essence</label><input type="number" id="res6" placeholder="0"></div>
-                <div class="r7"><label id="labelRes7">Scroll</label><input type="number" id="res7" placeholder="0"></div>
+                <div class="r1">
+                    <label class="resource-label">
+                        <span class="resource-icon-slot"><img src="../assets/resources/primary_shard.png" alt=""></span>
+                        Primary Shard
+                    </label>
+                    <input type="number" id="res1" placeholder="0">
+                </div>
+                <div class="r2">
+                    <label class="resource-label">
+                        <span class="resource-icon-slot"><img src="../assets/resources/intermediate_shard.png" alt=""></span>
+                        Intermediate Shard
+                    </label>
+                    <input type="number" id="res2" placeholder="0">
+                </div>
+                <div class="r3">
+                    <label class="resource-label">
+                        <span class="resource-icon-slot"><img src="../assets/resources/advanced_shard.png" alt=""></span>
+                        Advanced Shard
+                    </label>
+                    <input type="number" id="res3" placeholder="0">
+                </div>
+                <div class="r4">
+                    <label id="labelRes4">
+                        <span class="resource-icon-slot"><img id="iconRes4" src="" alt=""></span>
+                        <span id="labelRes4Text">Primary Essence</span>
+                    </label>
+                    <input type="number" id="res4" placeholder="0">
+                </div>
+                <div class="r5">
+                    <label id="labelRes5">
+                        <span class="resource-icon-slot"><img id="iconRes5" src="" alt=""></span>
+                        <span id="labelRes5Text">Intermediate Essence</span>
+                    </label>
+                    <input type="number" id="res5" placeholder="0">
+                </div>
+                <div class="r6">
+                    <label id="labelRes6">
+                        <span class="resource-icon-slot"><img id="iconRes6" src="" alt=""></span>
+                        <span id="labelRes6Text">Advanced Essence</span>
+                    </label>
+                    <input type="number" id="res6" placeholder="0">
+                </div>
+                <div class="r7">
+                    <label id="labelRes7">
+                        <span class="resource-icon-slot"><img id="iconRes7" src="" alt=""></span>
+                        <span id="labelRes7Text">Scroll</span>
+                    </label>
+                    <input type="number" id="res7" placeholder="0">
+                </div>
                 <div class="btn"><button id="calculateButton">Calculate</button></div>
             </div>
         </div>
@@ -123,7 +208,7 @@
 
     <div class="view-toggle">
     <button id="farmViewButton" class="active">Farm Path & Boss Cards</button>
-    <button id="resourcesViewButton">Total Resources</button>
+    <button id="resourcesViewButton">Resources Required</button>
 </div>
 
 <div id="farmView">
@@ -163,19 +248,28 @@
         </div>
 
         <div class="resource-cell">
-            <label>Primary Shard</label>
-            <p id="resultPrimaryShard">-</p>
-        </div>
+    <label>
+        <span class="resource-icon-slot"><img src="../assets/resources/primary_shard.png" alt=""></span>
+        Primary Shard
+    </label>
+    <p id="resultPrimaryShard">-</p>
+</div>
 
-        <div class="resource-cell">
-            <label>Intermediate Shard</label>
-            <p id="resultIntermediateShard">-</p>
-        </div>
+<div class="resource-cell">
+    <label>
+        <span class="resource-icon-slot"><img src="../assets/resources/intermediate_shard.png" alt=""></span>
+        Intermediate Shard
+    </label>
+    <p id="resultIntermediateShard">-</p>
+</div>
 
-        <div class="resource-cell">
-            <label>Advanced Shard</label>
-            <p id="resultAdvancedShard">-</p>
-        </div>
+<div class="resource-cell">
+    <label>
+        <span class="resource-icon-slot"><img src="../assets/resources/advanced_shard.png" alt=""></span>
+        Advanced Shard
+    </label>
+    <p id="resultAdvancedShard">-</p>
+</div>
 
     </div>
 

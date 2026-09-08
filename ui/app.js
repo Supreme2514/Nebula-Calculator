@@ -10,7 +10,188 @@ const bosses = [
   "Mizar",
   "Alkaid"
 ];
+const starNodeMap = {
+    Dubhe: "n1",
+    Merak: "n2",
+    Phecda: "n3",
+    Megrez: "n4",
+    Alioth: "n5",
+    Mizar: "n6",
+    Alkaid: "n7"
+};
+// ==============================
+// Resource Icons
+// ==============================
+const resourceIcons = {
+    primaryShard: "../assets/resources/primary_shard.png",
+    intermediateShard: "../assets/resources/intermediate_shard.png",
+    advancedShard: "../assets/resources/advanced_shard.png",
+    primaryEssence: (boss) => `../assets/resources/primary_${boss.toLowerCase()}.png`,
+    intermediateEssence: (boss) => `../assets/resources/intermediate_${boss.toLowerCase()}.png`,
+    advancedEssence: (boss) => `../assets/resources/advanced_${boss.toLowerCase()}.png`,
+    scroll: (boss) => `../assets/resources/scroll_${boss.toLowerCase()}.png`,
+    coin: "../assets/resources/coin.png",
+    ingot: "../assets/resources/ingot.png"
+};
+// ==============================
+// Characters
+// ==============================
+const classIcons = {
+    archer: "../assets/classes/archer.png",
+    assassin: "../assets/classes/assassin.png",
+    mage: "../assets/classes/mage.png",
+    taoist: "../assets/classes/taoist.png",
+    warrior: "../assets/classes/warrior.png"
+};
 
+const CHARACTERS_STORAGE_KEY = "nebulaCalculatorCharacters";
+
+let characters = {};
+let activeCharacterId = null;
+let selectedNewCharacterClass = null;
+
+function loadCharactersFromStorage() {
+    try {
+        const raw = localStorage.getItem(CHARACTERS_STORAGE_KEY);
+        if (!raw) return;
+
+        const parsed = JSON.parse(raw);
+        characters = parsed.characters || {};
+        activeCharacterId = parsed.activeCharacterId || null;
+    } catch (err) {
+        console.error("Failed to load characters:", err);
+    }
+}
+
+function saveCharactersToStorage() {
+    try {
+        localStorage.setItem(
+            CHARACTERS_STORAGE_KEY,
+            JSON.stringify({ characters, activeCharacterId })
+        );
+    } catch (err) {
+        console.error("Failed to save characters:", err);
+    }
+}
+
+function levelToAbsolute(levelStr) {
+    if (!levelStr || levelStr === "0") return 0;
+    const [tier, level] = levelStr.split("-").map(Number);
+    return (tier - 1) * 7 + level;
+}
+
+function calculateCharacterLevelTotal(charBossLevels) {
+    return bosses.reduce((sum, bossName) => {
+        const current = charBossLevels?.[bossName]?.current ?? "0";
+        return sum + levelToAbsolute(current);
+    }, 0);
+}
+
+function getActiveCharacter() {
+    return activeCharacterId ? characters[activeCharacterId] : null;
+}
+function saveCurrentStateToActiveCharacter() {
+    const character = getActiveCharacter();
+    if (!character) return;
+
+    character.bossLevelRanges = bossLevelRanges;
+    character.bossEssenceInventory = bossEssenceInventory;
+    character.inventory = {
+        res1: document.getElementById("res1").value,
+        res2: document.getElementById("res2").value,
+        res3: document.getElementById("res3").value, 
+    };
+
+    saveCharactersToStorage();
+    renderCharacterList();
+    updateCharacterButtonLabel();
+}
+
+function applyCharacterStateToForm(character) {
+    bossLevelRanges = character.bossLevelRanges || {};
+    bossEssenceInventory = character.bossEssenceInventory || {};
+
+const inv = character.inventory || {};
+    document.getElementById("res1").value = inv.res1 ?? "";
+    document.getElementById("res2").value = inv.res2 ?? "";
+    document.getElementById("res3").value = inv.res3 ?? "";
+
+    if (activeBoss) {
+        loadActiveBossLevels();
+        loadActiveBossEssence();
+    }
+}
+
+function switchCharacter(id) {
+    saveCurrentStateToActiveCharacter();
+
+    activeCharacterId = id;
+    applyCharacterStateToForm(characters[id]);
+
+    saveCharactersToStorage();
+    renderCharacterList();
+    updateCharacterButtonLabel();
+    closeCharacterDropdown();
+}
+
+function createCharacter(name, className) {
+    const id = `char_${Date.now()}`;
+
+    characters[id] = {
+        id,
+        name,
+        class: className,
+        bossLevelRanges: {},
+        inventory: {}
+    };
+
+    switchCharacter(id);
+}
+function updateCharacterButtonLabel() {
+    const label = document.getElementById("characterButtonLabel");
+    const character = getActiveCharacter();
+
+    if (character) {
+        const total = calculateCharacterLevelTotal(character.bossLevelRanges);
+        label.innerHTML = `
+            <span class="resource-icon-slot"><img src="${classIcons[character.class]}" alt=""></span>
+            ${character.name} — ${total.toLocaleString("sv-SE")}
+        `;
+        return;
+    }
+
+    label.textContent = Object.keys(characters).length > 0
+        ? "Select Character"
+        : "+ New Character";
+}
+
+function renderCharacterList() {
+    const list = document.getElementById("characterList");
+    list.innerHTML = "";
+
+    Object.values(characters).forEach(character => {
+        const total = calculateCharacterLevelTotal(character.bossLevelRanges);
+
+        const item = document.createElement("div");
+        item.className = "character-list-item" + (character.id === activeCharacterId ? " active" : "");
+        item.innerHTML = `
+            <img src="${classIcons[character.class]}" alt="${character.class}">
+            <span class="character-name">${character.name}</span>
+            <span class="character-total">${total.toLocaleString("sv-SE")}</span>
+        `;
+
+        item.addEventListener("click", () => switchCharacter(character.id));
+        list.appendChild(item);
+    });
+}
+
+function toggleCharacterDropdown() {
+    document.getElementById("characterDropdown").classList.toggle("open");
+}
+
+function closeCharacterDropdown() {
+    document.getElementById("characterDropdown").classList.remove("open");
+}
 // ==============================
 // DOM Elements
 // ==============================
@@ -53,6 +234,23 @@ function populateLevels(selectElement, includeZero) {
       selectElement.appendChild(option);
     }
   }
+}
+
+function updateStarNodeImage(bossName) {
+    const image = document.getElementById("starNodeImage");
+
+    if (!image) return;
+
+    const node = starNodeMap[bossName];
+
+    if (!node) {
+        image.src = "../assets/star-nodes/n8.png";
+        image.alt = "Star Node";
+        return;
+    }
+
+    image.src = `../assets/star-nodes/${node}.png`;
+    image.alt = `Star Node ${node}`;
 }
 
 function getUpgradePath(start, goal, upgrades) {
@@ -310,7 +508,7 @@ card.className = "card farming-card";
 
 card.style.setProperty(
     "--boss-image",
-    `url("../assets/${name.toLowerCase()}.png")`
+    `url("../assets/bosses/${name.toLowerCase()}.png")`
 );
 
   const gained = result.gained;
@@ -321,7 +519,7 @@ card.style.setProperty(
     <div class="result-grid">
 
       <div class="result-item">
-        <label>Estimated Runs</label>
+        <label>Kills</label>
         <span>${result.estimatedRuns.toLocaleString("sv-SE")}</span>
       </div>
 
@@ -331,37 +529,44 @@ card.style.setProperty(
   <label>Average Loot</label>
   <div class="resource-list">
 
-    Primary Shards:
-    ${Math.round(gained.shards.primary).toLocaleString("sv-SE")}
-    <br>
+    <div class="resource-list-row">
+        <span class="resource-icon-slot"><img src="../assets/resources/primary_shard.png" alt=""></span>
+        Primary Shards:
+        ${Math.round(gained.shards.primary).toLocaleString("sv-SE")}
+    </div>
 
-    Intermediate Shards:
-    ${Math.round(gained.shards.intermediate).toLocaleString("sv-SE")}
-    <br>
+    <div class="resource-list-row">
+        <span class="resource-icon-slot"><img src="../assets/resources/intermediate_shard.png" alt=""></span>
+        Intermediate Shards:
+        ${Math.round(gained.shards.intermediate).toLocaleString("sv-SE")}
+    </div>
 
-    Advanced Shards:
-    ${Math.round(gained.shards.advanced).toLocaleString("sv-SE")}
-    <br>
+    <div class="resource-list-row">
+        <span class="resource-icon-slot"><img src="../assets/resources/advanced_shard.png" alt=""></span>
+        Advanced Shards:
+        ${Math.round(gained.shards.advanced).toLocaleString("sv-SE")}
+    </div>
 
-    Primary Essence:
-    ${Math.round(gained.essence.primary).toLocaleString("sv-SE")}
-    <br>
+    <div class="resource-list-row">
+        <span class="resource-icon-slot"><img src="${resourceIcons.primaryEssence(name)}" alt=""></span>
+        Primary Essence:
+        ${Math.round(gained.essence.primary).toLocaleString("sv-SE")}
+    </div>
 
-    Intermediate Essence:
-    ${Math.round(gained.essence.intermediate).toLocaleString("sv-SE")}
-    <br>
+    <div class="resource-list-row">
+        <span class="resource-icon-slot"><img src="${resourceIcons.intermediateEssence(name)}" alt=""></span>
+        Intermediate Essence:
+        ${Math.round(gained.essence.intermediate).toLocaleString("sv-SE")}
+    </div>
 
-    Advanced Essence:
-    ${Math.round(gained.essence.advanced).toLocaleString("sv-SE")}
-
-  </div>
 </div>
 
       <div class="section-divider"></div>
 
       <div class="result-item">
-        <label>Maximum Conquest</label>
+        <label>Conquest</label>
         <span>
+          <span class="resource-icon-slot"><img src="../assets/resources/conquest.png" alt=""></span>
           ${(result.estimatedRuns * 50).toLocaleString("sv-SE")}
         </span>
       </div>
@@ -428,17 +633,17 @@ function renderBossCards(farmPath) {
     }
 
     // Valda bossar
-    for (const bossName of selectedBosses) {
+for (const bossName of bosses) {
 
-        const result = combinedBosses[bossName];
+    const result = combinedBosses[bossName];
 
-        if (!result) continue;
+    if (!result) continue;
 
-        createBossCard(
-            bossName,
-            result
-        );
-    }
+    createBossCard(
+        bossName,
+        result
+    );
+}
 
     // Alkaid används automatiskt för shard farming
     // även om användaren inte valt Alkaid.
@@ -517,60 +722,68 @@ function renderSweep(bossDrops, remainingShards) {
         50;
 
     sweepResult.innerHTML = `
-        <div class="sweep-shards">
-            <div class="sweep-result-item">
-                <label>Primary Shards</label>
-                <strong>
-                    +${Math.round(
-                        sweepsRequired * shardsPerSweep.primary
-                    ).toLocaleString("sv-SE")}
-                </strong>
-            </div>
-
-            <div class="sweep-result-item">
-                <label>Intermediate Shards</label>
-                <strong>
-                    +${Math.round(
-                        sweepsRequired * shardsPerSweep.intermediate
-                    ).toLocaleString("sv-SE")}
-                </strong>
-            </div>
-
-            <div class="sweep-result-item">
-                <label>Advanced Shards</label>
-                <strong>
-                    +${Math.round(
-                        sweepsRequired * shardsPerSweep.advanced
-                    ).toLocaleString("sv-SE")}
-                </strong>
-            </div>
+    <div class="sweep-shards">
+        <div class="sweep-result-item">
+            <label>
+                <span class="resource-icon-slot"><img src="../assets/resources/primary_shard.png" alt=""></span>
+                Primary Shards
+            </label>
+            <strong>
+                +${Math.round(
+                    sweepsRequired * shardsPerSweep.primary
+                ).toLocaleString("sv-SE")}
+            </strong>
         </div>
 
-        <div class="sweep-summary">
-            <div class="sweep-result-item">
-                <label>Sweeps Required</label>
-                <strong>
-                    ${sweepsRequired.toLocaleString("sv-SE")}
-                </strong>
-            </div>
-
-            <div class="sweep-result-item">
-                <label>Total Conquest</label>
-                <strong>
-                    ${totalConquest.toLocaleString("sv-SE")}
-                </strong>
-            </div>
+        <div class="sweep-result-item">
+            <label>
+                <span class="resource-icon-slot"><img src="../assets/resources/intermediate_shard.png" alt=""></span>
+                Intermediate Shards
+            </label>
+            <strong>
+                +${Math.round(
+                    sweepsRequired * shardsPerSweep.intermediate
+                ).toLocaleString("sv-SE")}
+            </strong>
         </div>
-    `;
+
+        <div class="sweep-result-item">
+            <label>
+                <span class="resource-icon-slot"><img src="../assets/resources/advanced_shard.png" alt=""></span>
+                Advanced Shards
+            </label>
+            <strong>
+                +${Math.round(
+                    sweepsRequired * shardsPerSweep.advanced
+                ).toLocaleString("sv-SE")}
+            </strong>
+        </div>
+    </div>
+
+    <div class="sweep-summary">
+        <div class="sweep-result-item">
+            <label>Sweeps Required</label>
+            <strong>
+                ${sweepsRequired.toLocaleString("sv-SE")}
+            </strong>
+        </div>
+
+        <div class="sweep-result-item">
+            <label>
+                <span class="resource-icon-slot"><img src="../assets/resources/conquest.png" alt=""></span>
+                Total Conquest
+            </label>
+            <strong>
+                ${totalConquest.toLocaleString("sv-SE")}
+            </strong>
+        </div>
+    </div>
+`;
 }
 
-function generateFarmPath(bossMissing, bossDrops) {
+function generateFarmPath(bossMissing, bossDrops, inventory) {
 
     const steps = [];
-
-    // ==========================
-    // Shared shard pool
-    // ==========================
 
     const remainingShards = {
         primary: 0,
@@ -578,17 +791,20 @@ function generateFarmPath(bossMissing, bossDrops) {
         advanced: 0
     };
 
-    // Sum shards needed from all selected bosses.
     for (const bossName of selectedBosses) {
-
         const missing = bossMissing[bossName];
-
         if (!missing) continue;
 
         remainingShards.primary += missing.shards.primary;
         remainingShards.intermediate += missing.shards.intermediate;
         remainingShards.advanced += missing.shards.advanced;
     }
+
+    // Subtract real shard inventory ONCE from the combined total —
+    // same approach totalMissing.shards already uses correctly.
+    remainingShards.primary = Math.max(0, remainingShards.primary - inventory.shards.primary);
+    remainingShards.intermediate = Math.max(0, remainingShards.intermediate - inventory.shards.intermediate);
+    remainingShards.advanced = Math.max(0, remainingShards.advanced - inventory.shards.advanced);
 
     // ==========================
     // Essence Phase
@@ -606,12 +822,11 @@ function generateFarmPath(bossMissing, bossDrops) {
         if (!missing) continue;
 
         const essenceNeeded = missing.essence;
-
+    
         const needsEssence =
             essenceNeeded.primary > 0 ||
-            essenceNeeded.intermediate > 0 ||
-            essenceNeeded.advanced > 0;
-
+            essenceNeeded.intermediate > 0;
+           
         // No essence needed
         if (!needsEssence) {
             steps.push({
@@ -619,6 +834,7 @@ function generateFarmPath(bossMissing, bossDrops) {
                 runs: 0,
                 phase: "Essence",
                 status: "Complete",
+                advancedEssenceRemaining: essenceNeeded.advanced,
                 gained: {
                     shards: {
                         primary: 0,
@@ -719,26 +935,6 @@ function renderFarmPath(steps) {
         const row = document.createElement("div");
         row.className = "farm-step";
 
-        const completed = [];
-
-        if (step.completed?.primaryEssence)
-            completed.push("Primary Essence");
-
-        if (step.completed?.intermediateEssence)
-            completed.push("Intermediate Essence");
-
-        if (step.completed?.advancedEssence)
-            completed.push("Advanced Essence");
-
-        if (step.completed?.primaryShard)
-            completed.push("Primary Shard");
-
-        if (step.completed?.intermediateShard)
-            completed.push("Intermediate Shard");
-
-        if (step.completed?.advancedShard)
-            completed.push("Advanced Shard");
-
         // --------------------------------
         // Complete step
         // --------------------------------
@@ -762,9 +958,12 @@ function renderFarmPath(steps) {
                         Essence complete
                     </div>
 
-                    <div class="farm-step-complete-message">
-                        ✓ Inventory already covers required essence
-                    </div>
+                   <div class="farm-step-complete-message">
+                    <span class="farm-step-complete-highlight">✓</span> Inventory already covers required essence
+                    ${step.advancedEssenceRemaining > 0
+                    ? ` (<span class="farm-step-complete-highlight">${step.advancedEssenceRemaining.toLocaleString("sv-SE")}</span> Advanced Essence still needed — not farmable)`
+                    : ""}
+                   </div>
 
                 </div>
             `;
@@ -812,34 +1011,43 @@ function renderFarmPath(steps) {
 
                 <div class="farm-step-loot">
 
-                    <div>
-                        <span>Primary Shard</span>
-                        <strong>
-                            +${Math.round(
-                                step.gained.shards.primary
-                            ).toLocaleString("sv-SE")}
-                        </strong>
-                    </div>
+    <div>
+        <span>
+            <span class="resource-icon-slot"><img src="../assets/resources/primary_shard.png" alt=""></span>
+            Primary Shard
+        </span>
+        <strong>
+            +${Math.round(
+                step.gained.shards.primary
+            ).toLocaleString("sv-SE")}
+        </strong>
+    </div>
 
-                    <div>
-                        <span>Intermediate Shard</span>
-                        <strong>
-                            +${Math.round(
-                                step.gained.shards.intermediate
-                            ).toLocaleString("sv-SE")}
-                        </strong>
-                    </div>
+    <div>
+        <span>
+            <span class="resource-icon-slot"><img src="../assets/resources/intermediate_shard.png" alt=""></span>
+            Intermediate Shard
+        </span>
+        <strong>
+            +${Math.round(
+                step.gained.shards.intermediate
+            ).toLocaleString("sv-SE")}
+        </strong>
+    </div>
 
-                    <div>
-                        <span>Advanced Shard</span>
-                        <strong>
-                            +${Math.round(
-                                step.gained.shards.advanced
-                            ).toLocaleString("sv-SE")}
-                        </strong>
-                    </div>
+    <div>
+        <span>
+            <span class="resource-icon-slot"><img src="../assets/resources/advanced_shard.png" alt=""></span>
+            Advanced Shard
+        </span>
+        <strong>
+            +${Math.round(
+                step.gained.shards.advanced
+            ).toLocaleString("sv-SE")}
+        </strong>
+    </div>
 
-                </div>
+</div>
 
             </div>
         `;
@@ -899,7 +1107,8 @@ function saveActiveBossEssence() {
     bossEssenceInventory[activeBoss] = {
         primary: Number(document.getElementById("res4").value) || 0,
         intermediate: Number(document.getElementById("res5").value) || 0,
-        advanced: Number(document.getElementById("res6").value) || 0
+        advanced: Number(document.getElementById("res6").value) || 0,
+        scrolls: Number(document.getElementById("res7").value) || 0
     };
 }
 
@@ -908,6 +1117,7 @@ function loadActiveBossEssence() {
         document.getElementById("res4").value = 0;
         document.getElementById("res5").value = 0;
         document.getElementById("res6").value = 0;
+        document.getElementById("res7").value = 0;
         return;
     }
 
@@ -917,10 +1127,12 @@ function loadActiveBossEssence() {
         document.getElementById("res4").value = saved.primary;
         document.getElementById("res5").value = saved.intermediate;
         document.getElementById("res6").value = saved.advanced;
+        document.getElementById("res7").value = saved.scrolls ?? 0;
     } else {
         document.getElementById("res4").value = 0;
         document.getElementById("res5").value = 0;
         document.getElementById("res6").value = 0;
+        document.getElementById("res7").value = 0;
     }
 }
 function updateBossImage(bossName) {
@@ -929,19 +1141,26 @@ function updateBossImage(bossName) {
     if (!bossImage) return;
 
     if (!bossName) {
-        bossImage.src = "../assets/lord_dubhe.png";
-        bossImage.alt = "Lord Dubhe";
+        bossImage.src = "../assets/bosses/default.png";
+        bossImage.alt = "Default Boss";
         return;
     }
 
-    const filename = `../assets/lord_${bossName.toLowerCase()}.png`;
+    const filename = `../assets/bosses/lord_${bossName.toLowerCase()}.png`;
 
     bossImage.src = filename;
     bossImage.alt = `Lord ${bossName}`;
 }
+
 // Event listeners
-currentLevelSelect.addEventListener("change", saveActiveBossLevels);
-targetLevelSelect.addEventListener("change", saveActiveBossLevels);
+currentLevelSelect.addEventListener("change", () => {
+    saveActiveBossLevels();
+    saveCurrentStateToActiveCharacter();
+});
+targetLevelSelect.addEventListener("change", () => {
+    saveActiveBossLevels();
+    saveCurrentStateToActiveCharacter();
+});
 
 document.getElementById("res4").addEventListener(
     "change",
@@ -957,6 +1176,50 @@ document.getElementById("res6").addEventListener(
     "change",
     saveActiveBossEssence
 );
+document.getElementById("res7").addEventListener(
+    "change",
+    saveActiveBossEssence
+);
+document.getElementById("characterButton").addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleCharacterDropdown();
+});
+
+document.addEventListener("click", (e) => {
+    const dropdown = document.getElementById("characterDropdown");
+    const button = document.getElementById("characterButton");
+    if (!dropdown.contains(e.target) && !button.contains(e.target)) {
+        closeCharacterDropdown();
+    }
+});
+
+document.querySelectorAll(".character-class-option").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".character-class-option").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedNewCharacterClass = btn.dataset.class;
+    });
+});
+
+document.getElementById("createCharacterButton").addEventListener("click", () => {
+    const nameInput = document.getElementById("newCharacterName");
+    const name = nameInput.value.trim();
+
+    if (!name || !selectedNewCharacterClass) {
+        alert("Enter a name and pick a class.");
+        return;
+    }
+
+    createCharacter(name, selectedNewCharacterClass);
+    nameInput.value = "";
+    document.querySelectorAll(".character-class-option").forEach(b => b.classList.remove("selected"));
+    selectedNewCharacterClass = null;
+});
+
+["res1", "res2", "res3", "res4", "res5", "res6", "res7"].forEach(id => {
+    document.getElementById(id).addEventListener("input", saveCurrentStateToActiveCharacter);
+});
+
 const sweepToggle = document.getElementById("sweepToggle");
 const sweepContent = document.getElementById("sweepContent");
 const sweepArrow = document.getElementById("sweepArrow");
@@ -968,19 +1231,33 @@ sweepToggle.addEventListener("click", () => {
     sweepArrow.textContent = isOpen ? "▾" : "▸";
 });
 
+const fallbackBoss = bosses[0]; // e.g. "Dubhe" — used only for the placeholder shape
+
+function setResourceIcon(imgId, resolver, boss) {
+  const img = document.getElementById(imgId);
+  img.src = resolver(boss ?? fallbackBoss);
+  img.classList.toggle("placeholder", !boss);
+}
+
 function updateResourceLabels(boss = null) {
   const name = boss ?? "Boss";
 
-  document.getElementById("labelRes4").textContent = `Primary ${name} Essence`;
-  document.getElementById("labelRes5").textContent = `Intermediate ${name} Essence`;
-  document.getElementById("labelRes6").textContent = `Advanced ${name} Essence`;
-  document.getElementById("labelRes7").textContent = `${name} Scroll`;
+  document.getElementById("labelRes4Text").textContent = `Primary ${name} Essence`;
+  document.getElementById("labelRes5Text").textContent = `Intermediate ${name} Essence`;
+  document.getElementById("labelRes6Text").textContent = `Advanced ${name} Essence`;
+  document.getElementById("labelRes7Text").textContent = `${name} Scroll`;
+
+  setResourceIcon("iconRes4", resourceIcons.primaryEssence, boss);
+  setResourceIcon("iconRes5", resourceIcons.intermediateEssence, boss);
+  setResourceIcon("iconRes6", resourceIcons.advancedEssence, boss);
+  setResourceIcon("iconRes7", resourceIcons.scroll, boss);
 }
 
 function selectBoss(boss) {
 
     // Save the levels of the boss we're currently leaving
     saveActiveBossLevels();
+    saveCurrentStateToActiveCharacter();
 
     // Boss is already selected
     if (selectedBosses.includes(boss)) {
@@ -1033,6 +1310,7 @@ function selectBoss(boss) {
 
     setActiveBoss();
     updateBossImage(activeBoss);
+    updateStarNodeImage(activeBoss);
 
     if (activeBoss) {
         updateResourceLabels(activeBoss);
@@ -1040,6 +1318,7 @@ function selectBoss(boss) {
         updateResourceLabels(null);
     }
 }
+
 // ==============================
 // Startup
 // ==============================
@@ -1047,7 +1326,6 @@ populateLevels(currentLevelSelect, true);
 populateLevels(targetLevelSelect, false);
 
 const bossButtons = document.getElementById("bossButtons");
-console.log("BOSS BUTTONS INIT", bossButtons, bosses);
 bosses.forEach(boss => {
   const button = document.createElement("button");
   button.textContent = boss;
@@ -1060,6 +1338,12 @@ bosses.forEach(boss => {
   bossButtons.appendChild(button);
 });
 
+updateResourceLabels();
+loadCharactersFromStorage();
+activeCharacterId = null;
+
+renderCharacterList();
+updateCharacterButtonLabel();
 // ==============================
 // Event Listener
 // ==============================
@@ -1153,13 +1437,9 @@ for (const bossName of selectedBosses) {
 bossMissing[bossName] = calculateMissing(
     cost,
     {
-        shards: {
-            primary: 0,
-            intermediate: 0,
-            advanced: 0
-        },
+        shards: { primary: 0, intermediate: 0, advanced: 0 },
         essence: essenceInventory,
-        scrolls: 0,
+        scrolls: essenceInventory.scrolls || 0,
         ingots: 0,
         coins: 0
     },
@@ -1180,9 +1460,6 @@ bossMissing[bossName] = calculateMissing(
     totalCost.scrolls += cost.scrolls;
     totalCost.ingots += cost.ingots;
 }
-console.log("SELECTED BOSSES:", selectedBosses);
-console.log("BOSS LEVEL RANGES:", bossLevelRanges);
-console.log("BOSS MISSING:", bossMissing);
 
 // ==========================
 // Update Result Card
@@ -1265,13 +1542,9 @@ document.getElementById("resultAdvancedShard").textContent =
 
 const bossResourceSections =
     document.getElementById("bossResourceSections");
-console.log(
-    "bossResourceSections:",
-    bossResourceSections
-);
 bossResourceSections.innerHTML = "";
 
-for (const bossName of selectedBosses) {
+for (const bossName of bosses) {
 
     const cost = bossCosts[bossName];
     const missing = bossMissing[bossName];
@@ -1282,63 +1555,81 @@ for (const bossName of selectedBosses) {
     section.className = "boss-resource-section";
 
     section.innerHTML = `
-    <h3>${bossName}</h3>
+<h3>${bossName}</h3>
 
-    <div class="boss-resource-table">
+<div class="boss-resource-table">
 
-      <div class="boss-image-cell">
-            <img class="boss-image-placeholder" src="../assets/${bossName.toLowerCase()}_frame.png" alt="${bossName}">
-        </div>
-
-        <div class="boss-resource-row">
-            <div class="resource-cell">
-                <label>Primary Essence</label>
-                <p>
-                    ${missing.essence.primary.toLocaleString("sv-SE")}
-                </p>
-            </div>
-
-            <div class="resource-cell">
-                <label>Intermediate Essence</label>
-                <p>
-                    ${missing.essence.intermediate.toLocaleString("sv-SE")}
-                </p>
-            </div>
-
-            <div class="resource-cell non-farmable">
-                <label>Advanced Essence</label>
-                <p>
-                    ${missing.essence.advanced.toLocaleString("sv-SE")}
-                </p>
-                <small>Not farmable</small>
-            </div>
-        </div>
-
-        <div class="boss-resource-row">
-            <div class="resource-cell non-farmable">
-                <label>Scrolls</label>
-                <p>
-                    ${cost.scrolls.toLocaleString("sv-SE")}
-                </p>
-                <small>Not farmable</small>
-            </div>
-
-            <div class="resource-cell">
-                <label>Ingots</label>
-                <p>
-                    ${cost.ingots.toLocaleString("sv-SE")}
-                </p>
-            </div>
-
-            <div class="resource-cell">
-                <label>Coins</label>
-                <p>
-                    ${cost.coins.toLocaleString("sv-SE")}
-                </p>
-            </div>
-        </div>
-
+  <div class="boss-image-cell">
+        <img class="boss-image-placeholder" src="../assets/bosses/${bossName.toLowerCase()}_frame.png" alt="${bossName}">
     </div>
+
+    <div class="boss-resource-row">
+        <div class="resource-cell">
+            <label>
+                <span class="resource-icon-slot"><img src="${resourceIcons.primaryEssence(bossName)}" alt=""></span>
+                Primary Essence
+            </label>
+            <p>
+                ${missing.essence.primary.toLocaleString("sv-SE")}
+            </p>
+        </div>
+
+        <div class="resource-cell">
+            <label>
+                <span class="resource-icon-slot"><img src="${resourceIcons.intermediateEssence(bossName)}" alt=""></span>
+                Intermediate Essence
+            </label>
+            <p>
+                ${missing.essence.intermediate.toLocaleString("sv-SE")}
+            </p>
+        </div>
+
+        <div class="resource-cell non-farmable">
+            <label>
+                <span class="resource-icon-slot"><img src="${resourceIcons.advancedEssence(bossName)}" alt=""></span>
+                Advanced Essence
+            </label>
+            <p>
+                ${missing.essence.advanced.toLocaleString("sv-SE")}
+            </p>
+            <small>Not farmable</small>
+        </div>
+    </div>
+
+    <div class="boss-resource-row">
+        <div class="resource-cell non-farmable">
+            <label>
+                <span class="resource-icon-slot"><img src="${resourceIcons.scroll(bossName)}" alt=""></span>
+                Scrolls
+            </label>
+            <p>
+                ${missing.scrolls.toLocaleString("sv-SE")}
+            </p>
+            <small>Not farmable</small>
+        </div>
+
+        <div class="resource-cell">
+            <label>
+                <span class="resource-icon-slot"><img src="${resourceIcons.ingot}" alt=""></span>
+                Ingots
+            </label>
+            <p>
+                ${cost.ingots.toLocaleString("sv-SE")}
+            </p>
+        </div>
+
+        <div class="resource-cell">
+            <label>
+                <span class="resource-icon-slot"><img src="${resourceIcons.coin}" alt=""></span>
+                Coins
+            </label>
+            <p>
+                ${cost.coins.toLocaleString("sv-SE")}
+            </p>
+        </div>
+    </div>
+
+</div>
 `;
 
     bossResourceSections.appendChild(section);
@@ -1350,7 +1641,8 @@ for (const bossName of selectedBosses) {
 
 const farmPath = generateFarmPath(
     bossMissing,
-    bossDrops
+    bossDrops,
+    inventory
 );
 
 renderFarmPath(farmPath);
