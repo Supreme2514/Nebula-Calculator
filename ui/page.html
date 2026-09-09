@@ -146,66 +146,6 @@
         </div>
     </div>
 
-    <div class="card sweep-card">
-
-    <button id="sweepToggle" class="sweep-toggle">
-        <span>Sweeps</span>
-        <span id="sweepArrow">▸</span>
-    </button>
-
-    <div id="sweepContent" class="sweep-content">
-
-        <div class="sweep-top-row">
-
-            <div class="sweep-boss-selection">
-
-                <div class="sweep-boss-group">
-                    <label>Standard</label>
-
-                    <div class="sweep-boss-button standard">
-                        ✓ Alkaid
-                    </div>
-                </div>
-
-                <div class="sweep-boss-group">
-                    <label>Extra</label>
-
-                    <div class="sweep-extra-options">
-
-                        <label class="sweep-boss-option">
-                            <input type="checkbox" id="sweepMizar">
-                            <span>Mizar</span>
-                        </label>
-
-                        <label class="sweep-boss-option">
-                            <input type="checkbox" id="sweepAlioth">
-                            <span>Alioth</span>
-                        </label>
-
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="sweep-info">
-                <strong>Sweep info</strong>
-
-                <span>
-                    Add Mizar and/or Alioth to get done quicker but with a slight increase in total conquest spent. 
-                    This feature only focuses on shards.
-                </span>
-            </div>
-
-        </div>
-
-        <div id="sweepResult" class="sweep-result">
-            Select one or more extra sweep bosses.
-        </div>
-
-    </div>
-
-</div>
-
     <div class="view-toggle">
     <button id="farmViewButton" class="active">Farm Path & Boss Cards</button>
     <button id="resourcesViewButton">Resources Required</button>
@@ -233,6 +173,51 @@
 <!-- Results -->
 <div id="resourcesView">
 
+    <div class="card sweep-card">
+        <h2>Sweep Estimate</h2>
+
+        <div class="sweep-top-row">
+
+            <div class="sweep-boss-selection">
+
+                <div class="sweep-boss-group">
+                    <label>Standard</label>
+                    <div class="sweep-boss-button standard">
+                        ✓ Alkaid
+                    </div>
+                </div>
+
+                <div class="sweep-boss-group">
+                    <label>Optional</label>
+                    <div class="sweep-extra-options">
+                        <label class="sweep-boss-option">
+                            <input type="checkbox" id="sweepMizar">
+                            <span>Mizar</span>
+                        </label>
+                        <label class="sweep-boss-option">
+                            <input type="checkbox" id="sweepAlioth">
+                            <span>Alioth</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sweep-info">
+                <strong>Sweep info</strong>
+                <span>
+                    Add Mizar and/or Alioth to get done quicker but with a slight increase in total conquest spent.
+                    This feature only focuses on shards.
+                </span>
+            </div>
+
+        </div>
+
+        <div id="sweepResult" class="sweep-result">
+            Press Calculate to see sweep totals.
+        </div>
+    </div>
+
     <div class="card results-card">
 
         <h2>Resources Required</h2>
@@ -243,9 +228,12 @@
     <div class="shard-row">
 
         <div class="resource-cell">
-            <label>Shards</label>
-            <p>Total</p>
-        </div>
+    <label>
+        <span class="resource-icon-slot"><img src="../assets/resources/ingot.png" alt=""></span>
+        Ingots
+    </label>
+    <p id="resultIngots">-</p>
+</div>
 
         <div class="resource-cell">
     <label>

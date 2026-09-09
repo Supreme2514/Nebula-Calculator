@@ -727,14 +727,6 @@ button {
    Sweep
    ========================== */
 
-.sweep-content {
-    display: none;
-}
-
-.sweep-content.open {
-    display: block;
-}
-
 .sweep-top-row {
     display: grid;
     grid-template-columns: minmax(320px, 1fr) minmax(0, 2fr);

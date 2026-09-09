@@ -204,6 +204,8 @@ let selectedBosses = [];
 let bossLevelRanges = {};
 let activeBoss = null;
 let bossEssenceInventory = {};
+let cachedBossDrops = null;
+let cachedRemainingShards = null;
 
 // ==============================
 // Helper Functions
@@ -1219,16 +1221,16 @@ document.getElementById("createCharacterButton").addEventListener("click", () =>
 ["res1", "res2", "res3", "res4", "res5", "res6", "res7"].forEach(id => {
     document.getElementById(id).addEventListener("input", saveCurrentStateToActiveCharacter);
 });
+document.getElementById("sweepMizar").addEventListener("change", () => {
+    if (cachedBossDrops && cachedRemainingShards) {
+        renderSweep(cachedBossDrops, cachedRemainingShards);
+    }
+});
 
-const sweepToggle = document.getElementById("sweepToggle");
-const sweepContent = document.getElementById("sweepContent");
-const sweepArrow = document.getElementById("sweepArrow");
-
-sweepToggle.addEventListener("click", () => {
-
-    const isOpen = sweepContent.classList.toggle("open");
-
-    sweepArrow.textContent = isOpen ? "▾" : "▸";
+document.getElementById("sweepAlioth").addEventListener("change", () => {
+    if (cachedBossDrops && cachedRemainingShards) {
+        renderSweep(cachedBossDrops, cachedRemainingShards);
+    }
 });
 
 const fallbackBoss = bosses[0]; // e.g. "Dubhe" — used only for the placeholder shape
@@ -1540,6 +1542,9 @@ document.getElementById("resultIntermediateShard").textContent =
 document.getElementById("resultAdvancedShard").textContent =
     totalMissing.shards.advanced.toLocaleString("sv-SE");
 
+document.getElementById("resultIngots").textContent =
+    totalMissing.ingots.toLocaleString("sv-SE");
+
 const bossResourceSections =
     document.getElementById("bossResourceSections");
 bossResourceSections.innerHTML = "";
@@ -1647,7 +1652,9 @@ const farmPath = generateFarmPath(
 
 renderFarmPath(farmPath);
 renderBossCards(farmPath);
-renderSweep(bossDrops, totalMissing.shards);
+cachedBossDrops = bossDrops;
+cachedRemainingShards = totalMissing.shards;
+renderSweep(cachedBossDrops, cachedRemainingShards);
 
 });
 }
