@@ -2,6 +2,8 @@
 
 A fan-made resource and farming calculator for tracking star node upgrades, essence/shard costs, and optimal farming paths across bosses. Built as a static site — no backend, no build step, just HTML, CSS, and JavaScript.
 
+**[Live Demo](https://your-username.github.io/your-repo-name/)** — update this link once GitHub Pages is enabled.
+
 ## Features
 
 - **Star Node leveling** — pick a current and target level per boss and see exactly what it costs.
@@ -44,4 +46,4 @@ This is a static site — no installation or build step required.
 
 ## License
 
-Feel free to fork, adapt, or build on this for your own use.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
