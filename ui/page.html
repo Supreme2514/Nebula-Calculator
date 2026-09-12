@@ -10,44 +10,79 @@
 <body>
 
 <div class="container">
+    <button id="infoButton" class="info-button">
+    <img src="../assets/info.png" alt="How to use">
+</button>
+
+<div id="infoModalOverlay" class="modal-overlay">
+    <div class="modal-box">
+        <button id="closeInfoModal" class="modal-close">&times;</button>
+        <h2>How to Use</h2>
+        <div class="modal-body">
+            <p>1. Start by adding a character.</p>
+            <p>2. Select the bosses you want, by default none are selected. Clicking an active boss will de-activate it.</p>
+            <p>3. Set your star node level and which level you aim for.</p>
+            <p>4. Fill in what shards, essences and scrolls you might have in your bag. Shards are universal, essences and scrolls are boss specific.</p>
+            <p>5. Press Calculate to see the optimal farm path and resources required.</p>
+            <p>Character information (Node level, shards etc.) is automatically saved.</p>
+            <p class="modal-highlight">Optimal farm path and boss cards:</p>
+            <ul>
+                <li>This will aim to complete the lowest bosses essences first, and once done it will focus on farming shards from Alkaid. </li>
+                <li>Each card will show you an estimate of shards/essences collected.</li>
+            </ul>
+            <p class="modal-highlight">Resources Required:</p>
+            <ul>
+                <li>The sweep function only looks at shards, here you can add Mizar and Alioth.</li>
+                <li>List view of the selected bosses. (Alkaid wont show up unless selected, but is used as base for the shards).</li>
+                </ul>
+        </div>
+    </div>
+</div>
+<div id="deleteConfirmOverlay" class="modal-overlay">
+    <div class="modal-box">
+        <h2>Delete Character</h2>
+        <div class="modal-body">
+            <p>Delete <strong id="deleteConfirmName"></strong>? This cannot be undone.</p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" id="deleteConfirmCancel">Cancel</button>
+            <button type="button" id="deleteConfirmAccept" class="modal-danger">Delete</button>
+        </div>
+    </div>
+</div>
     <header class="title-bar">
         <div class="ornament"></div>
         <h1>Nebula Calculator</h1>
         <div class="ornament"></div>
     </header>
+    
     <div class="character-bar">
-    <button id="characterButton" class="character-button">
-        <span id="characterButtonLabel">+ New Character</span>
-        <span class="character-arrow">▾</span>
-    </button>
+    <button id="addCharacterButton" class="character-add-button">+ Add New</button>
 
-    <div id="characterDropdown" class="character-dropdown">
-        <div id="characterList" class="character-list"></div>
+    <div id="characterList" class="character-list"></div>
 
-        <div class="character-divider"></div>
-
-        <div class="character-new">
-            <input type="text" id="newCharacterName" placeholder="Character name" maxlength="20">
-            <div class="character-class-options">
-                <button type="button" class="character-class-option" data-class="archer">
-                    <img src="../assets/classes/archer.png" alt="Archer">
-                </button>
-                <button type="button" class="character-class-option" data-class="assassin">
-                    <img src="../assets/classes/assassin.png" alt="Assassin">
-                </button>
-                <button type="button" class="character-class-option" data-class="mage">
-                    <img src="../assets/classes/mage.png" alt="Mage">
-                </button>
-                <button type="button" class="character-class-option" data-class="taoist">
-                    <img src="../assets/classes/taoist.png" alt="Taoist">
-                </button>
-                <button type="button" class="character-class-option" data-class="warrior">
-                    <img src="../assets/classes/warrior.png" alt="Warrior">
-                </button>
-            </div>
-            <button type="button" id="createCharacterButton">Create Character</button>
+    <div id="characterCreatePopover" class="character-create-popover">
+        <input type="text" id="newCharacterName" placeholder="Character name" maxlength="20">
+        <div class="character-class-options">
+            <button type="button" class="character-class-option" data-class="archer">
+                <img src="../assets/classes/archer.png" alt="Archer">
+            </button>
+            <button type="button" class="character-class-option" data-class="assassin">
+                <img src="../assets/classes/assassin.png" alt="Assassin">
+            </button>
+            <button type="button" class="character-class-option" data-class="mage">
+                <img src="../assets/classes/mage.png" alt="Mage">
+            </button>
+            <button type="button" class="character-class-option" data-class="taoist">
+                <img src="../assets/classes/taoist.png" alt="Taoist">
+            </button>
+            <button type="button" class="character-class-option" data-class="warrior">
+                <img src="../assets/classes/warrior.png" alt="Warrior">
+            </button>
         </div>
+        <button type="button" id="createCharacterButton">Create Character</button>
     </div>
+
 </div>
      <!-- Boss Buttons -->
     <div id="bossButtons" class="boss-buttons"></div>
@@ -81,11 +116,21 @@
 
 <!-- Boss -->
 <div class="card boss-image-card">
+    <button id="bossInfoButton" class="boss-info-button">
+        <img src="../assets/info.png" alt="Average Drops">
+    </button>
+
     <img
         id="bossImage"
         src="../assets/bosses/default.png"
         alt="Default Boss"
     >
+
+    <div id="bossDropPopup" class="boss-drop-popup">
+        <button id="closeBossDropPopup" class="boss-drop-popup-close">&times;</button>
+        <h3 id="bossDropPopupTitle">Average Drops</h3>
+        <div id="bossDropPopupContent" class="boss-drop-popup-content"></div>
+    </div>
 </div>
 
                 <!-- Current Resources -->
@@ -220,7 +265,14 @@
 
     <div class="card results-card">
 
-        <h2>Resources Required</h2>
+        <h2>
+    Resources Required
+    <span class="token-cost-inline">
+    <span class="dash"></span>
+    <span class="resource-icon-slot"><img src="../assets/resources/conquest.png" alt=""></span>
+    <span id="resultTotalConquest" class="token-cost-value">-</span>
+</span>
+</h2>
 
         <!-- Global Shards -->
        <div class="resource-summary-section">
@@ -273,4 +325,4 @@
 <script src="app.js"></script>
 </body>
 
-```[Work in Progress]
+[Made by Supreme with the help of ChatGPT and Claude]
