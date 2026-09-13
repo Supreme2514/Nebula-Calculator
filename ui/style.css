@@ -1221,3 +1221,54 @@ button {
 .modal-highlight {
     color: var(--gold-light);
 }
+@media (max-width: 768px) {
+
+    /* Stack Star Node / Boss / Inventory into one column */
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .main-layout .card {
+        height: auto;
+        grid-column: span 1 !important;
+    }
+
+    /* Sweep: stack boss selection above the info box instead of side-by-side */
+    .sweep-top-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Shard row and per-boss resource rows: 2 columns instead of 3/4 */
+    .shard-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .boss-resource-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Boss resource table: stack image above content instead of beside it */
+    .boss-resource-table {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .boss-image-cell {
+        grid-row: auto;
+    }
+
+    /* Boss Cards grid: one per row instead of four */
+    #bossCards {
+        grid-template-columns: 1fr;
+    }
+
+    /* Boss selection buttons: wrap instead of squeezing 7 into one row */
+    .boss-buttons {
+        flex-wrap: wrap;
+    }
+
+    .boss-buttons button {
+        flex: 1 1 calc(33% - 8px);
+    }
+
+}
