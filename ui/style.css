@@ -725,10 +725,9 @@ button {
 .resource-grid label {
     height: 2.4em;
     display: flex;
-    align-items: center;
-    gap: 6px;
+    align-items: flex-end;
     white-space: nowrap;
-    font-size: clamp(0.72rem, 0.8vw, 0.85rem);
+    font-size: 0.78rem;
     margin-bottom: 2px;
 }
 .resource-icon-slot {
